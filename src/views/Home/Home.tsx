@@ -13,15 +13,14 @@ import FormItem from '../../components/FormItem/FormItem';
 const Home = () => {
   const navigate = useNavigate();
   const {notificationHandler} = useContext(NotificationContext)
-  const [key, setKey] = useState('XYouxTAMC9' as string)
-  const [name, setName] = useState('' as string)
+  // const [key, setKey] = useState<string>('')
+  const [name, setName] = useState<string>('')
   const { roomId } = useParams()
 
   clearLocalStorage()
 
   const createRoom = () => {
     const form = {
-      key,
       name
     }
     socket.emit('createRoom', form)
@@ -71,20 +70,20 @@ const Home = () => {
         <div className='flex justify-center items-center w-[25rem]'>
           <div className="w-full">
             <h1 className='mb-4 text-center text-xl bold'>Genshin Impact Picking & Banning System</h1>
-            {!roomId
+            {/* {!roomId
             ?
               <FormItem>
                 <Input name='Secret Key' value={key} onChange={(value: string) => setKey(value)} placeholder='Secret Key'></Input> 
               </FormItem>
-            :
+            : */}
               <FormItem>
                 <Input name='Username' value={name} onChange={(value: string) => setName(value)} placeholder='Username'></Input>
               </FormItem>
-            }
+            {/* } */}
             <div>
             {roomId
               ? <Button block disabled={!name} onClick={() => joinRoom()}>Join Room</Button>
-              : <Button block disabled={!(key || name)} onClick={() => createRoom()}>Create Room</Button>}
+              : <Button block disabled={!name} onClick={() => createRoom()}>Create Room</Button>}
             </div>
           </div>
         </div>
