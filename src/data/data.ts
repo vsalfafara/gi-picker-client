@@ -148,6 +148,12 @@ export const Characters: Character[] = [
     thumbnail: 'assets/Characters/Thumbnail/Eula.webp',
   },
   {
+    name: 'Faruzan',
+    vision: Elements.Anemo.name,
+    image: 'assets/Characters/Flash/Faruzan.webp',
+    thumbnail: 'assets/Characters/Thumbnail/Faruzan.webp'
+  },
+  {
     name: 'Fischl',
     vision: Elements.Electro.name,
     image: 'assets/Characters/Flash/Fischl.webp',
@@ -224,6 +230,12 @@ export const Characters: Character[] = [
     vision: Elements.Electro.name,
     image: 'assets/Characters/Flash/Kuki Shinobu.webp',
     thumbnail: 'assets/Characters/Thumbnail/Kuki Shinobu.webp',
+  },
+  {
+    name: 'Layla',
+    vision: Elements.Cryo.name,
+    image: 'assets/Characters/Flash/Layla.webp',
+    thumbnail: 'assets/Characters/Thumbnail/Layla.webp'
   },
   {
     name: 'Lisa',
@@ -344,6 +356,12 @@ export const Characters: Character[] = [
     vision: Elements.Anemo.name,
     image: 'assets/Characters/Flash/Venti.webp',
     thumbnail: 'assets/Characters/Thumbnail/Venti.webp',
+  },
+  {
+    name: 'Wanderer',
+    vision: Elements.Anemo.name,
+    image: 'assets/Characters/Flash/Wanderer.webp',
+    thumbnail: 'assets/Characters/Thumbnail/Wanderer.webp'
   },
   {
     name: 'Xiangling',
