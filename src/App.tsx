@@ -1,0 +1,17 @@
+import { Route, Routes } from "react-router-dom";
+import routes from "./routes"
+
+function App() {
+  return (
+    <div className="h-screen w-screen flex items-center justify-center overflow-auto bg-gray-900">
+      <div className="fixed top-0 left-0 h-screen w-screen bg-sumeru bg-cover bg-center opacity-40 z-0"></div>
+      <div className="z-10">
+        <Routes>
+          {routes.map((route, index) => <Route key={index} path={route.path} element={route.element} />)}
+        </Routes>
+      </div>
+    </div>
+  )
+}
+
+export default App

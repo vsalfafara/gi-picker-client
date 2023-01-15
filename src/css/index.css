@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  font-size: 16px;
+}
+
+#root {
+  height: 100vh;
+}
