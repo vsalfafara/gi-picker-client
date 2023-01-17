@@ -16,12 +16,11 @@ const Room = () => {
   const {notificationHandler} = useContext(NotificationContext)
   const [showDialog, setShowDialog] = useState(false)
   const [gameType, setGameType] = useState<string>()
-  const [gameTypeError, setGameTypeError] = useState(false)
   const [mode, setMode] = useState<string>()
-  const [modeError, setModeError] = useState(false)
+  const [withTimer, setWithTimer] = useState<string>()
+  const [time, setTime] = useState<number>()
   const [players, setPlayers] = useState<User[]>([])
   const [firstPick, setFirstPick] = useState<string>()
-  const [firstPickError, setFirstPickError] = useState(false)
   const { roomId } = useParams()
   const [user, _] = useState(lsGetUser())
 
@@ -75,11 +74,20 @@ const Room = () => {
     setShowDialog(false)
   }
 
+  function handleSetTime(value: string) {
+    setWithTimer(value)
+    if (value === 'No') {
+      setTime(0)
+    }
+  }
+
   function startGame() {
     const form = {
       gameType,
       mode,
       players,
+      withTimer,
+      time,
       firstPick: Number(firstPick),
       roomId
     }
@@ -111,6 +119,23 @@ const Room = () => {
                 </div>
               </FormItem>
             }
+            <FormItem label="With Timer" labelPosition='left' labelWidth="w-[7rem]">
+              <div className='flex'>
+                <Radio name='with-timer' id='Yes' label='Yes' value='Yes' onChange={(value: string) => handleSetTime(value)} />
+                <Radio name='with-timer' id='No' label='No' value='No' onChange={(value: string) => handleSetTime(value)} />
+              </div>
+            </FormItem>
+            {
+              withTimer === 'Yes'
+              &&
+              <FormItem label="Timer (Seconds)" labelPosition='left' labelWidth="w-[7rem]">
+                <div className='flex'>
+                  <Radio name='timer' id='15' label='15' value={15} onChange={(value: number) => setTime(Number(value))} />
+                  <Radio name='timer' id='30' label='30' value={30} onChange={(value: number) => setTime(Number(value))} />
+                  <Radio name='timer' id='45' label='45' value={45} onChange={(value: number) => setTime(Number(value))} />
+                </div>
+              </FormItem>
+            }
             <FormItem label="First Pick" labelPosition='left' labelWidth="w-[7rem]">
               <div className="flex">
                 {players.map((player: User, index: any) => {
@@ -123,7 +148,7 @@ const Room = () => {
             <div className="flex justify-end">
               <Button type='text' onClick={() => openInfo()}>Help</Button>
               <Button type='primary' onClick={() => copyLink()}>Share Room Link</Button>
-              <Button type='success' disabled={players.length !== 2 || !(gameType && mode && firstPick)} onClick={() => startGame()}>Start Game</Button>
+              <Button type='success' disabled={players.length !== 2 || !(gameType && mode && firstPick && (withTimer !== 'Yes' || time))} onClick={() => startGame()}>Start Game</Button>
             </div>
           </Card>
         </div>

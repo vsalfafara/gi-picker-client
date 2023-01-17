@@ -485,6 +485,14 @@ export const Characters: Character[] = [
   }
 ]
 
+export const NoPick: Character = {
+  name: 'No Pick',
+  vision: Elements.Unaligned.name,
+  image: 'assets/Characters/Panel/zz.webp',
+  thumbnail: 'assets/Characters/Panel/Zhongli.webp',
+  panel: 'assets/Characters/Panel/zz.webp'
+}
+
 let modifiedCharacters = [...Characters]
 
 let availableCharacters = [...modifiedCharacters]

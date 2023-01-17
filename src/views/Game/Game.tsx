@@ -1,6 +1,6 @@
 import Button from "@/components/Button/Button"
 import Input from "@/components/Input/Input"
-import { Character, Elements, filterCharacters, getPanels, removeCharacter, resetCharacters } from "@/data/data"
+import { Character, Elements, filterCharacters, getPanels, NoPick, removeCharacter, resetCharacters } from "@/data/data"
 import Dialog from "@/components/Dialog/Dialog"
 import { useEffect, useState } from "react"
 import { useSearchParams, useNavigate } from "react-router-dom"
@@ -44,6 +44,7 @@ const Game = () => {
   const [pickPointer2, setPickPointer2] = useState(0)
   const [banPointer2, setBanPointer2] = useState(0)
   const [showHelp, setShowHelp] = useState(false)
+  const [time, setTime] = useState(0)
   const elements = Elements
 
   useEffect(() => {
@@ -61,6 +62,10 @@ const Game = () => {
       socket.off('getAllPlayersInRoom');
     }
   }, [socket])
+
+  socket.off('getTime').on('getTime', (time: number) => {
+    setTime(time)
+  })
 
   socket.off('announceTurn').on('announceTurn', (turn: Turn) => {
     setTurn(turn)
@@ -95,8 +100,45 @@ const Game = () => {
     }
   })
 
+  socket.off('nextTurn').on('nextTurn', () => {
+    nextTurn()
+  })
+
+  socket.off('noPick').on('noPick', async (selection: number) => {
+    console.log('no pick')
+    setSelectionType(-1)
+    if (selection) {
+      if (player) {
+        const newArr = [...player2Picks]
+        newArr[pickPointer2] = NoPick
+        setPlayer2Picks(newArr)
+        setPickPointer2((prev: number) => ++prev)
+      } else {
+        const newArr = [...player1Picks]
+        newArr[pickPointer1] = NoPick
+        setPlayer1Picks(newArr)
+        setPickPointer1((prev: number) => ++prev)
+      }
+    } else {
+      if (player) {
+        const newArr = [...player2Bans]
+        newArr[banPointer2] = NoPick
+        setPlayer2Bans(newArr)
+        setBanPointer2((prev: number) => ++prev)
+      } else {
+        const newArr = [...player1Bans]
+        newArr[banPointer1] = NoPick
+        setPlayer1Bans(newArr)
+        setBanPointer1((prev: number) => ++prev)
+      }
+    }
+    removeCharacterFromPanel(NoPick)
+    nextTurn()
+  })
+
   socket.off('select').on('select', (selection: number) => {
     setSelectionType(selection)
+    socket.emit('startTimer', user.roomId)
   })
 
   socket.off('goBack').on('goBack', () => {
@@ -160,9 +202,9 @@ const Game = () => {
     socket.emit('goBack', user.roomId)
   }
 
-  function removeCharacterFromPanel() {
+  function removeCharacterFromPanel(noPick: Character | null = null) {
     const data = {
-      character: selectedCharacter,
+      character: noPick ? noPick : selectedCharacter,
       roomId: user.roomId,
       player,
       selectionType
@@ -299,9 +341,12 @@ const Game = () => {
           <Button size="sm" type="danger" onClick={closeHelp}>Got it!</Button>
         </div>
       </Dialog>
+      <div className="flex justify-center text-white">
+        <span className="text-6xl font-bold">{time}</span>
+      </div>
       <div className="flex justify-between text-white">
-        <div className="w-56 text-2xl font-bold text-center">{players[0]?.name} {user.name === players[0]?.name ? '(You)' : ''}</div>
-        <div className="w-56 text-2xl font-bold text-center">{players[1]?.name} {user.name === players[1]?.name ? '(You)' : ''}</div>
+        <p className="w-56 text-2xl font-bold text-center">{players[0]?.name} {user.name === players[0]?.name ? '(You)' : ''}</p>
+        <p className="w-56 text-2xl font-bold text-center">{players[1]?.name} {user.name === players[1]?.name ? '(You)' : ''}</p>
       </div>
       <div className="flex mb-8 mt-4">
         <div className="flex flex-col justify-center">

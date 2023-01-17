@@ -2,7 +2,7 @@ type RadioProps = {
   id: string
   name: string
   label: string
-  value: string | undefined
+  value: string | number | undefined
   onChange: Function
   disabled: boolean
 }
