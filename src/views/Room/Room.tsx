@@ -39,8 +39,8 @@ const Room = () => {
   useEffect(() => {
     socket.on('getAllPlayersInRoom', (users: User[]) => setPlayers(users))
     resetCharacters()
-    socket.on('startGame', (mode: string) => {
-      navigate(`/game?mode=${mode}`)
+    socket.on('startGame', ({ mode, withTimer }) => {
+      navigate(`/game?mode=${mode}&withTimer=${withTimer}`)
     })
     return () => {
       socket.off('getAllPlayersInRoom');

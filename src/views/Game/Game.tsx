@@ -1,6 +1,6 @@
 import Button from "@/components/Button/Button"
 import Input from "@/components/Input/Input"
-import { Character, Elements, filterCharacters, getPanels, NoPick, removeCharacter, resetCharacters } from "@/data/data"
+import { Character, characterExists, Elements, filterCharacters, getPanels, NoPick, removeCharacter } from "@/data/data"
 import Dialog from "@/components/Dialog/Dialog"
 import { useEffect, useState } from "react"
 import { useSearchParams, useNavigate } from "react-router-dom"
@@ -25,13 +25,15 @@ const Game = () => {
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const noOfSelection = Number(params.get('mode')?.charAt(0))
+  const withTimer = params.get('withTimer')
+
   const [startGame, setStartGame] = useState(false)
   const [filter, setFilter] = useState<any>()
   const [panels, setPanels] = useState(getPanels())
   const [user] = useState(lsGetUser())
   const [players, setPlayers] = useState<User[]>([])
   const [player] = useState(lsGetPlayer())
-  const [turn, setTurn] = useState<Turn>()
+  const [_, setTurn] = useState<Turn>()
   const [selectionType, setSelectionType] = useState(-1)
   const [showDialog, setShowDialog] = useState(false)
   const [selectedCharacter, setSelectedCharacter] = useState<Character>()
@@ -45,6 +47,7 @@ const Game = () => {
   const [banPointer2, setBanPointer2] = useState(0)
   const [showHelp, setShowHelp] = useState(false)
   const [time, setTime] = useState(0)
+  const [selectType, setSelectType] = useState<number>(0)
   const elements = Elements
 
   useEffect(() => {
@@ -66,6 +69,45 @@ const Game = () => {
   socket.off('getTime').on('getTime', (time: number) => {
     setTime(time)
   })
+
+  useEffect(() => {
+    const character = characterExists(selectedCharacter?.name)
+    if (character) {
+      if (selectType === 2) {
+        if (player) {
+          const newArr = [...player2Picks]
+          newArr[pickPointer2] = selectedCharacter
+          setPlayer2Picks(newArr)
+          setPickPointer2((prev: number) => ++prev)
+        } else {
+          const newArr = [...player1Picks]
+          newArr[pickPointer1] = selectedCharacter
+          setPlayer1Picks(newArr)
+          setPickPointer1((prev: number) => ++prev)
+        }
+      } else if (selectType === 1){
+        if (player) {
+          const newArr = [...player2Bans]
+          newArr[banPointer2] = selectedCharacter
+          setPlayer2Bans(newArr)
+          setBanPointer2((prev: number) => ++prev)
+        } else {
+          const newArr = [...player1Bans]
+          newArr[banPointer1] = selectedCharacter
+          setPlayer1Bans(newArr)
+          setBanPointer1((prev: number) => ++prev)
+        }
+      }
+      closeDialog()
+      setSelectionType(-1)
+      removeCharacter(selectedCharacter?.name)
+      setPanels(getPanels())
+      removeCharacterFromPanel()
+      nextTurn()
+      setSelectType(0)
+    }
+    return
+  }, [selectType])
 
   socket.off('announceTurn').on('announceTurn', (turn: Turn) => {
     setTurn(turn)
@@ -138,6 +180,7 @@ const Game = () => {
 
   socket.off('select').on('select', (selection: number) => {
     setSelectionType(selection)
+    setSelectType(0)
     socket.emit('startTimer', user.roomId)
   })
 
@@ -147,33 +190,36 @@ const Game = () => {
   })
 
   socket.off('removeCharacter').on('removeCharacter', (data) => {
-    if (data.selectionType) {
-      if (data.player) {
-        const newArr = [...player2Picks]
-        newArr[pickPointer2] = data.character
-        setPlayer2Picks(newArr)
-        setPickPointer2((prev: number) => ++prev)
+    const character = characterExists(data.character.name)
+    if (character) {
+      if (data.selectionType) {
+        if (data.player) {
+          const newArr = [...player2Picks]
+          newArr[pickPointer2] = data.character
+          setPlayer2Picks(newArr)
+          setPickPointer2((prev: number) => ++prev)
+        } else {
+          const newArr = [...player1Picks]
+          newArr[pickPointer1] = data.character
+          setPlayer1Picks(newArr)
+          setPickPointer1((prev: number) => ++prev)
+        }
       } else {
-        const newArr = [...player1Picks]
-        newArr[pickPointer1] = data.character
-        setPlayer1Picks(newArr)
-        setPickPointer1((prev: number) => ++prev)
+        if (data.player) {
+          const newArr = [...player2Bans]
+          newArr[banPointer2] = data.character
+          setPlayer2Bans(newArr)
+          setBanPointer2((prev: number) => ++prev)
+        } else {
+          const newArr = [...player1Bans]
+          newArr[banPointer1] = data.character
+          setPlayer1Bans(newArr)
+          setBanPointer1((prev: number) => ++prev)
+        }
       }
-    } else {
-      if (data.player) {
-        const newArr = [...player2Bans]
-        newArr[banPointer2] = data.character
-        setPlayer2Bans(newArr)
-        setBanPointer2((prev: number) => ++prev)
-      } else {
-        const newArr = [...player1Bans]
-        newArr[banPointer1] = data.character
-        setPlayer1Bans(newArr)
-        setBanPointer1((prev: number) => ++prev)
-      }
+      removeCharacter(data.character.name)
+      setPanels(getPanels())
     }
-    removeCharacter(data.character.name)
-    setPanels(getPanels())
   })
 
   function handleFilter(value: string) {
@@ -221,47 +267,11 @@ const Game = () => {
   }
 
   function banCharacter() {
-    if (selectedCharacter) {
-      if (player) {
-        const newArr = [...player2Bans]
-        newArr[banPointer2] = selectedCharacter
-        setPlayer2Bans(newArr)
-        setBanPointer2((prev: number) => ++prev)
-      } else {
-        const newArr = [...player1Bans]
-        newArr[banPointer1] = selectedCharacter
-        setPlayer1Bans(newArr)
-        setBanPointer1((prev: number) => ++prev)
-      }
-      closeDialog()
-      setSelectionType(-1)
-      removeCharacter(selectedCharacter.name)
-      setPanels(getPanels())
-      removeCharacterFromPanel()
-      nextTurn()
-    }
+    setSelectType(1)
   }
 
   function pickCharacter() {
-    if (selectedCharacter) {
-      if (player) {
-        const newArr = [...player2Picks]
-        newArr[pickPointer2] = selectedCharacter
-        setPlayer2Picks(newArr)
-        setPickPointer2((prev: number) => ++prev)
-      } else {
-        const newArr = [...player1Picks]
-        newArr[pickPointer1] = selectedCharacter
-        setPlayer1Picks(newArr)
-        setPickPointer1((prev: number) => ++prev)
-      }
-      closeDialog()
-      setSelectionType(-1)
-      removeCharacter(selectedCharacter.name)
-      setPanels(getPanels())
-      removeCharacterFromPanel()
-      nextTurn()
-    }
+    setSelectType(2)
   }
 
   function closeHelp() {
@@ -307,7 +317,7 @@ const Game = () => {
           {
             selectionType
             ? <Button size="sm" onClick={pickCharacter}>Yes, pick!</Button>
-            : <Button size="sm" onClick={banCharacter} disabled={time < 2}>Yes, ban!</Button>
+            : <Button size="sm" onClick={banCharacter} disabled={(withTimer === 'Yes' && time < 2)}>Yes, ban!</Button>
           }
         </div>
       </Dialog>
@@ -342,9 +352,14 @@ const Game = () => {
           <Button size="sm" type="danger" onClick={closeHelp}>Got it!</Button>
         </div>
       </Dialog>
-      <div className="flex justify-center text-white">
-        <span className="text-6xl font-bold">{time}</span>
-      </div>
+      {
+        withTimer === 'Yes' &&
+        (
+          <div className="flex justify-center text-white">
+            <span className="text-6xl font-bold">{time}</span>
+          </div>
+        )
+      }
       <div className="flex justify-between text-white">
         <p className="w-56 text-2xl font-bold text-center">{players[0]?.name} {user.name === players[0]?.name ? '(You)' : ''}</p>
         <p className="w-56 text-2xl font-bold text-center">{players[1]?.name} {user.name === players[1]?.name ? '(You)' : ''}</p>

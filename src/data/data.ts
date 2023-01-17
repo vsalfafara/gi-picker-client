@@ -505,9 +505,13 @@ export function getPanels() {
   }, Object.create(null))
 }
 
-export function removeCharacter(name: string) {
+export function removeCharacter(name?: string) {
   modifiedCharacters = modifiedCharacters.filter((character: Character) => character.name !== name)
   availableCharacters = [...modifiedCharacters]
+}
+
+export function characterExists(name?: string) {
+  return availableCharacters.find((character: Character) => character.name === name)
 }
 
 export function filterCharacters(name?: string) {
