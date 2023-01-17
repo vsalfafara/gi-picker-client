@@ -243,6 +243,16 @@ const Game = () => {
 
   return (
     <div className="max-w-[1500px] w-full">
+      <div className="fixed top-4 right-4 flex justify-center mb-2">
+        {user.isHost &&
+        (
+          <>
+            <Button size="sm" onClick={() => start()} disabled={startGame}>Start</Button>
+            <Button size="sm" type="warning" onClick={() => goBack()}>Go Back to Room</Button>
+          </>
+        )}
+        <Button size="sm" type="danger" onClick={() => openHelp()}>Help</Button>
+      </div>
       <Dialog title={`${selectionType ? 'Pick' : 'Ban'} ${selectedCharacter?.name}?`} show={showDialog} handleCloseOutside={closeDialog}>
         <div className='mt-2'>
           <p className='text-sm text-gray-500'>
@@ -289,16 +299,6 @@ const Game = () => {
           <Button size="sm" type="danger" onClick={closeHelp}>Got it!</Button>
         </div>
       </Dialog>
-      <div className="fixed top-4 right-4 flex justify-center mb-2">
-        {user.isHost &&
-        (
-          <>
-            <Button size="sm" onClick={() => start()} disabled={startGame}>Start</Button>
-            <Button size="sm" type="warning" onClick={() => goBack()}>Go Back to Room</Button>
-          </>
-        )}
-        <Button size="sm" type="danger" onClick={() => openHelp()}>Help</Button>
-      </div>
       <div className="flex justify-between text-white">
         <div className="w-56 text-2xl font-bold text-center">{players[0]?.name} {user.name === players[0]?.name ? '(You)' : ''}</div>
         <div className="w-56 text-2xl font-bold text-center">{players[1]?.name} {user.name === players[1]?.name ? '(You)' : ''}</div>
@@ -307,8 +307,8 @@ const Game = () => {
         <div className="flex flex-col justify-center">
           {[...player1Picks].map((character: Character, index) => {
             return (
-              <div key={index} className={`h-24 w-56 border-2 border-green-400 rounded-md bg-gray-800 bg-opacity-70 my-2 first:mt-0 last:mb-0 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
-                <img src={character?.image} alt="" className="w-full h-auto" />
+              <div key={index} className={`h-24 w-48 border-2 border-green-400 rounded-md bg-gray-800 bg-opacity-70 my-2 first:mt-0 last:mb-0 ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
+                <img src={character?.panel} alt="" className="object-cover object-top h-full w-full" />
               </div>
             )
           })}
@@ -339,8 +339,8 @@ const Game = () => {
         <div className="flex flex-col justify-center">
           {[...player2Picks].map((character: Character, index) => {
             return (
-              <div key={index} className={`h-24 w-56 border-2 border-green-400 rounded-md bg-gray-800 bg-opacity-70 my-2 first:mt-0 last:mb-0 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
-                <img src={character?.image} alt="" className="w-full h-auto" />
+              <div key={index} className={`h-24 w-48 border-2 border-green-400 rounded-md bg-gray-800 bg-opacity-70 my-2 first:mt-0 last:mb-0 ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
+                <img src={character?.panel} alt="" className="object-cover object-top h-full w-full" />
               </div>
             )
           })}
@@ -350,8 +350,8 @@ const Game = () => {
         <div className="flex justify-center">
           {[...player1Bans].map((character: Character, index) => {
             return (
-              <div key={index} className={`relative h-16 w-36 border-2 border-red-400 rounded-md bg-gray-800 bg-opacity-70 mx-2 first:ml-0 last:mr-0 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
-                <img src={character?.image} alt="" className="w-full h-auto" />
+              <div key={index} className={`relative h-20 w-36 border-2 border-red-400 rounded-md bg-gray-800 bg-opacity-70 mx-2 first:ml-0 last:mr-0 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
+                <img src={character?.panel} alt="" className="object-cover object-center h-full w-full" />
                 {character && <div className="absolute top-0 left-0 h-full w-full z-10 bg-red-900 bg-opacity-40" />}
               </div>
             )
@@ -360,8 +360,8 @@ const Game = () => {
         <div className="flex flex-row-reverse justify-center">
           {[...player2Bans].map((character: Character, index) => {
             return (
-              <div key={index} className={`relative h-16 w-36 border-2 border-red-400 rounded-md bg-gray-800 bg-opacity-70 mx-2 first:mr-0 last:ml-0 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
-                <img src={character?.image} alt="" className="w-full h-auto" />
+              <div key={index} className={`relative h-20 w-36 border-2 border-red-400 rounded-md bg-gray-800 bg-opacity-70 mx-2 first:mr-0 last:ml-0 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
+                <img src={character?.panel} alt="" className="object-cover object-center h-full w-full" />
                 {character && <div className="absolute top-0 left-0 h-full w-full z-10 bg-red-900 bg-opacity-40" />}
               </div>
             )
