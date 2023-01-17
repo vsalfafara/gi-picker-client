@@ -105,7 +105,7 @@ const Game = () => {
   })
 
   socket.off('noPick').on('noPick', async (selection: number) => {
-    console.log('no pick')
+    setShowDialog(false)
     setSelectionType(-1)
     if (selection) {
       if (player) {
@@ -142,6 +142,7 @@ const Game = () => {
   })
 
   socket.off('goBack').on('goBack', () => {
+    socket.emit('stopTimer')
     navigate(`/room/${user.roomId}`)
   })
 
@@ -304,9 +305,9 @@ const Game = () => {
         <div className='mt-8 flex justify-end'>
           <Button size="sm" type="danger" onClick={closeDialog}>Uhh wait...</Button>
           {
-            selectionType 
+            selectionType
             ? <Button size="sm" onClick={pickCharacter}>Yes, pick!</Button>
-            : <Button size="sm" onClick={banCharacter}>Yes, ban!</Button>
+            : <Button size="sm" onClick={banCharacter} disabled={time < 2}>Yes, ban!</Button>
           }
         </div>
       </Dialog>
