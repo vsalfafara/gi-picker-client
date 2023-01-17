@@ -308,7 +308,7 @@ const Game = () => {
           {[...player1Picks].map((character: Character, index) => {
             return (
               <div key={index} className={`h-24 w-48 border-2 border-green-400 rounded-md bg-gray-800 bg-opacity-70 my-2 first:mt-0 last:mb-0 ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
-                <img src={character?.panel} alt="" className="object-cover object-top h-full w-full" />
+                <img src={character?.panel} alt="" className="object-cover object-center h-full w-full" />
               </div>
             )
           })}
@@ -340,7 +340,7 @@ const Game = () => {
           {[...player2Picks].map((character: Character, index) => {
             return (
               <div key={index} className={`h-24 w-48 border-2 border-green-400 rounded-md bg-gray-800 bg-opacity-70 my-2 first:mt-0 last:mb-0 ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
-                <img src={character?.panel} alt="" className="object-cover object-top h-full w-full" />
+                <img src={character?.panel} alt="" className="object-cover object-center h-full w-full" />
               </div>
             )
           })}
