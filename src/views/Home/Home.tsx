@@ -65,7 +65,7 @@ const Home = () => {
   }, [socket])
 
   return (
-    <div className='flex justify-center'>
+    <div className='h-full flex justify-center items-center'>
       <Card>
         <div className='flex justify-center items-center w-[25rem]'>
           <div className="w-full">

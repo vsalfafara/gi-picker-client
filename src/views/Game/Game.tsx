@@ -7,6 +7,7 @@ import { useSearchParams, useNavigate } from "react-router-dom"
 import socket from "@/socket/socket"
 import { lsGetUser, lsGetPlayer } from "@/storage/localStorage"
 import { User } from "@/types/storage"
+import { Transition } from "@headlessui/react"
 
 type Player = {
   id: string
@@ -49,6 +50,10 @@ const Game = () => {
   const [time, setTime] = useState(0)
   const [selectType, setSelectType] = useState<number>(0)
   const elements = Elements
+  const [draftStart, setDraftStart] = useState(false)
+  const [showPanel, setShowPanel] = useState(false)
+  const [splash, setSplash] = useState<Character>()
+  const [showSplash, setShowSplash] = useState(false)
 
   useEffect(() => {
     socket.emit('getAllPlayersInGame', user.roomId)
@@ -103,7 +108,6 @@ const Game = () => {
       removeCharacter(selectedCharacter?.name)
       setPanels(getPanels())
       removeCharacterFromPanel()
-      nextTurn()
       setSelectType(0)
     }
     return
@@ -111,6 +115,7 @@ const Game = () => {
 
   socket.off('announceTurn').on('announceTurn', (turn: Turn) => {
     setTurn(turn)
+    setShowPanel(true)
     if (turn.selection) {
       if ((turn.turn < 9 && turn.turn % 2 === 0) || (turn.turn > 8 && turn.turn % 2 !== 0)) {
         const newArr = [...player2Picks]
@@ -140,6 +145,18 @@ const Game = () => {
         setPlayer1Bans(newArr)
       }
     }
+  })
+
+  let draftStartInterval: ReturnType<typeof setTimeout>
+  socket.off('draftStart').on('draftStart', () => {
+    setDraftStart(true)
+    draftStartInterval = setTimeout(() => {
+      setDraftStart(false)
+      if (user.isHost) {
+        nextTurn()
+      }
+      clearTimeout(draftStartInterval)
+    }, 3000) 
   })
 
   socket.off('nextTurn').on('nextTurn', () => {
@@ -219,6 +236,24 @@ const Game = () => {
       }
       removeCharacter(data.character.name)
       setPanels(getPanels())
+      if (data.character.name !== 'No Pick') {
+        setSplash(data.character)
+        setShowPanel(false)
+        let splashDelay = setTimeout(() => {
+          setShowSplash(true)
+          clearTimeout(splashDelay)
+        }, 300)
+        let splashTimeout = setTimeout(() => {
+          setShowSplash(false)
+          if (user.isHost) {
+            nextTurn()
+          }
+          clearTimeout(splashTimeout)
+        }, 3000)
+        let panelDelay = setTimeout(() => {
+          setShowPanel(true)
+        }, 3400)
+      }
     }
   })
 
@@ -238,7 +273,7 @@ const Game = () => {
 
   function start() {
     setStartGame(true)
-    nextTurn()
+    socket.emit('draftStart', user.roomId)
   }
 
   function nextTurn() {
@@ -295,8 +330,67 @@ const Game = () => {
   }
 
   return (
-    <div className="w-[1400px]">
-      <div className="fixed top-4 right-4 flex justify-center mb-2">
+    <div className="h-screen max-w-screen-2xl flex flex-col justify-center m-auto">
+      <Transition
+        appear={true}
+        show={draftStart}
+        enter="transition duration-300"
+        enterFrom="opacity-0 -translate-y-8"
+        enterTo="opacity-100 translate-y-0"
+        leave="transition duration-300"
+        leaveFrom="opacity-100 translate-y-8"
+        leaveTo="opacity-0 translate-y-16"
+        className="fixed top-1/2 -translate-y-1/2 right-1/2 translate-x-1/2"
+      >
+        <h1 className="font-bold text-white text-6xl">Draft Starting!</h1>
+      </Transition>
+      <Dialog title='How to play' show={showHelp} handleCloseOutside={closeHelp} width="w-[600px]">
+        <div className='mt-2'>
+          <p className='text-sm text-gray-500 mb-2'>
+            The game will start when the game master clicks the start button (not visible for players).
+          </p>
+          <p className='text-sm text-gray-500 mb-2'>
+            One of the ban or pick panels will flash, indicating that side's player's turn to select a character.
+          </p>
+          <p className='text-sm text-gray-500 mb-2'>
+            For the players, to select a character, simply click a character in the character table in the center. A dialog will appear, asking if the player wishes to proceed selecting that character. Once the character is selected, that character will be removed from the table, and the player will not be able to select a character, as this is now the other player's turn.
+          </p>
+          <p className='text-sm text-gray-500 mb-2'>
+            To find a specific character, simply type the name of that character in the text box above the character table.
+          </p>
+          <p className='text-sm text-gray-500 mb-2'>
+            The game ends when all players have selected the appropriate number of characters for the mode, or when the game master clicks the <span className="font-semibold">Go Back to Room</span> button (not visible for players).
+          </p>
+          <p className='text-sm text-gray-500 mb-8'>
+            When the game master clicks the  <span className="font-semibold">Go Back to Room</span> button, the game master, including the players, will be moved back to the room page where the game master can readjust the game settings.
+          </p>
+          <p className='text-sm text-gray-500 mb-2'>
+            <span className="font-semibold">WARNING</span>
+          </p>
+          <p className='text-sm text-gray-500 mb-2'>
+            When you are in this page, do not attempt to refresh, as this might cause the game to break.
+          </p>
+        </div>
+        <div className='mt-8 flex justify-end'>
+          <Button size="sm" type="danger" onClick={closeHelp}>Got it!</Button>
+        </div>
+      </Dialog>
+      <Dialog title={`${selectionType ? 'Pick' : 'Ban'} ${selectedCharacter?.name}?`} show={showDialog} handleCloseOutside={closeDialog}>
+        <div className='mt-2'>
+          <p className='text-sm text-gray-500'>
+            Do you want to {selectionType ? 'pick' : 'ban'} {selectedCharacter?.name}?
+          </p>
+        </div>
+        <div className='mt-8 flex justify-end'>
+          <Button size="sm" type="danger" onClick={closeDialog}>Uhh wait...</Button>
+          {
+            selectionType
+            ? <Button size="sm" onClick={pickCharacter}>Yes, pick!</Button>
+            : <Button size="sm" onClick={banCharacter} disabled={(withTimer === 'Yes' && time < 2)}>Yes, ban!</Button>
+          }
+        </div>
+      </Dialog>
+      <div className="flex justify-end p-4">
         {user.isHost &&
         (
           <>
@@ -306,189 +400,184 @@ const Game = () => {
         )}
         <Button size="sm" type="danger" onClick={() => openHelp()}>Help</Button>
       </div>
-      {user.isHost
-        ?
-        (
-          <>
-            <div className="flex justify-center my-8">
-              <div className="flex flex-col justify-center mr-8">
-                {[...player1Bans].map((character: Character, index) => {
-                  return (
-                    <div key={index} className={`relative h-16 w-28 border-2 border-red-400 rounded-md bg-gray-800 bg-opacity-70 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
-                      <img src={character?.panel} alt="" className="object-cover object-center h-full w-full" />
-                      {character && <div className="absolute top-0 left-0 h-full w-full z-10 bg-red-900 bg-opacity-40" />}
-                    </div>
-                  )
-                })}
-              </div>
-              <div className="flex justify-center items-center">
-                {[...player1Picks].map((character: Character, index) => {
-                  return (
-                    <div key={index} className={`h-40 w-72 border-2 border-green-400 rounded-md bg-gray-800 bg-opacity-70 mx-2 first:ml-0 last:mr-0 ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
-                      <img src={character?.adminPanel} alt="" className="object-cover object-center h-full w-full" />
-                    </div>
-                  )
-                })}
-              </div>
+      <div className="flex justify-between mb-4">
+        <div className="flex">
+          <div className="flex flex-col items-start">
+            <div className="w-80 text-2xl font-bold text-center text-white bg-yellow-600">
+              <p>{players[0]?.name} {user.name === players[0]?.name ? '(You)' : ''}</p>
             </div>
-            {
-              withTimer === 'Yes' &&
-              (
-                <div className="flex justify-center text-white">
-                  <span className="pl-20 text-6xl font-bold">{time}</span>
-                </div>
-              )
-            }
-            <div className="flex justify-center my-8">
-              <div className="flex flex-col justify-center mr-8">
-                {[...player2Bans].map((character: Character, index) => {
-                  return (
-                    <div key={index} className={`relative h-16 w-28 border-2 border-red-400 rounded-md bg-gray-800 bg-opacity-70 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
-                      <img src={character?.panel} alt="" className="object-cover object-center h-full w-full" />
-                      {character && <div className="absolute top-0 left-0 h-full w-full z-10 bg-red-900 bg-opacity-40" />}
-                    </div>
-                  )
-                })}
-              </div>
-              <div className="flex justify-center items-center">
-                {[...player2Picks].map((character: Character, index) => {
-                  return (
-                    <div key={index} className={`h-40 w-72 border-2 border-green-400 rounded-md bg-gray-800 bg-opacity-70 mx-2 first:ml-0 last:mr-0 ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
-                      <img src={character?.adminPanel} alt="" className="object-cover object-center h-full w-full" />
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          </>
-        )
-        :
-        <>
-          <Dialog title={`${selectionType ? 'Pick' : 'Ban'} ${selectedCharacter?.name}?`} show={showDialog} handleCloseOutside={closeDialog}>
-            <div className='mt-2'>
-              <p className='text-sm text-gray-500'>
-                Do you want to {selectionType ? 'pick' : 'ban'} {selectedCharacter?.name}?
-              </p>
-            </div>
-            <div className='mt-8 flex justify-end'>
-              <Button size="sm" type="danger" onClick={closeDialog}>Uhh wait...</Button>
-              {
-                selectionType
-                ? <Button size="sm" onClick={pickCharacter}>Yes, pick!</Button>
-                : <Button size="sm" onClick={banCharacter} disabled={(withTimer === 'Yes' && time < 2)}>Yes, ban!</Button>
-              }
-            </div>
-          </Dialog>
-          <Dialog title='How to play' show={showHelp} handleCloseOutside={closeHelp} width="w-[600px]">
-            <div className='mt-2'>
-              <p className='text-sm text-gray-500 mb-2'>
-                The game will start when the game master clicks the start button (not visible for players).
-              </p>
-              <p className='text-sm text-gray-500 mb-2'>
-                One of the ban or pick panels will flash, indicating that side's player's turn to select a character.
-              </p>
-              <p className='text-sm text-gray-500 mb-2'>
-                For the players, to select a character, simply click a character in the character table in the center. A dialog will appear, asking if the player wishes to proceed selecting that character. Once the character is selected, that character will be removed from the table, and the player will not be able to select a character, as this is now the other player's turn.
-              </p>
-              <p className='text-sm text-gray-500 mb-2'>
-                To find a specific character, simply type the name of that character in the text box above the character table.
-              </p>
-              <p className='text-sm text-gray-500 mb-2'>
-                The game ends when all players have selected the appropriate number of characters for the mode, or when the game master clicks the <span className="font-semibold">Go Back to Room</span> button (not visible for players).
-              </p>
-              <p className='text-sm text-gray-500 mb-8'>
-                When the game master clicks the  <span className="font-semibold">Go Back to Room</span> button, the game master, including the players, will be moved back to the room page where the game master can readjust the game settings.
-              </p>
-              <p className='text-sm text-gray-500 mb-2'>
-                <span className="font-semibold">WARNING</span>
-              </p>
-              <p className='text-sm text-gray-500 mb-2'>
-                When you are in this page, do not attempt to refresh, as this might cause the game to break.
-              </p>
-            </div>
-            <div className='mt-8 flex justify-end'>
-              <Button size="sm" type="danger" onClick={closeHelp}>Got it!</Button>
-            </div>
-          </Dialog>
-          {
-            withTimer === 'Yes' &&
-            (
-              <div className="flex justify-center text-white">
-                <span className="text-6xl font-bold">{time}</span>
-              </div>
-            )
-          }
-          <div className="flex justify-between text-white">
-            <p className="w-56 text-2xl font-bold text-center">{players[0]?.name} {user.name === players[0]?.name ? '(You)' : ''}</p>
-            <p className="w-56 text-2xl font-bold text-center">{players[1]?.name} {user.name === players[1]?.name ? '(You)' : ''}</p>
-          </div>
-          <div className="flex mb-8 mt-4">
-            <div className="flex flex-col justify-center">
+            <div>
               {[...player1Picks].map((character: Character, index) => {
                 return (
-                  <div key={index} className={`h-24 w-48 border-2 border-green-400 rounded-md bg-gray-800 bg-opacity-70 my-2 first:mt-0 last:mb-0 ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
-                    <img src={character?.panel} alt="" className="object-cover object-center h-full w-full" />
+                  <div key={index} className={`${noOfSelection < 4 ? 'h-40' : 'h-32'} ${user.isHost ? 'w-96' : 'w-80'} border-4 border-yellow-600 rounded-md bg-gray-800 bg-opacity-70 last:mr-0 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
+                    {
+                      character?.image && (
+                      <Transition
+                        appear={true}
+                        show={!!character}
+                        enter="transition-opacity duration-300"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="transition-opacity duration-300"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                        className={`${noOfSelection < 4 ? 'h-40' : 'h-32'} ${user.isHost ? 'w-96' : 'w-80'}`}
+                      >
+                        <img src={`assets/Characters/Admin Panel/${character?.image}`} alt="" className="object-cover object-center h-full w-full" />
+                      </Transition>
+                      )
+                    }
                   </div>
                 )
               })}
             </div>
-            <div className="flex-grow mx-16 h-[425px] overflow-y-scroll scrollbar scrollbar-thin scrollbar-thumb-gray-400 scrollbar-thumb-rounded-full p-4 bg-gray-800 bg-opacity-70 rounded-md">
-              <div>
-                <Input value={filter} placeholder="Search Character" onChange={(value: string) => handleFilter(value)}></Input>
-              </div>
-              <div className="flex justify-center">
-                {Object.keys(elements).map((element, index: number) => {
-                  return (
-                    <div key={index} className="inline-flex flex-col">
-                      <div className="h-20 w-20 m-2">
-                        <img src={elements[element].image} className="h-full" />
-                      </div>
-                      {panels[element]?.map((panel: any, index: number) => {
-                        return (
-                          <div key={index} className="h-20 w-20 m-2 cursor-pointer" onClick={() => selectCharacter(panel)}>
-                            <img src={panel.thumbnail} alt="" />
+          </div>
+        </div>
+        <Transition
+          show={showSplash}
+          enter="transition ease-out duration-500"
+          enterFrom="opacity-0 -translate-y-28"
+          enterTo="opacity-100 translate-y-0"
+          leave="transition-opacity ease-out duration-300"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="h-[500px] w-[600px] flex justify-center items-center">
+            <img src={`assets/Characters/Splash/${splash?.image}`} alt="" />
+          </div>
+        </Transition>
+        {
+          !user.isHost &&
+            (
+              <Transition
+                show={showPanel}
+                enter="transition-opacity duration-300"
+                enterFrom="opacity-0"
+                enterTo="opacity-100"
+                leave="transition-opacityduration-300"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+              >
+                <div className="h-[450px] overflow-y-scroll scrollbar scrollbar-thin scrollbar-thumb-gray-400 scrollbar-thumb-rounded-full p-4 bg-gray-800 border-4 border-yellow-600 rounded-md">
+                  <div>
+                    <Input value={filter} placeholder="Search Character" onChange={(value: string) => handleFilter(value)}></Input>
+                  </div>
+                  <div className="flex justify-center">
+                    {Object.keys(elements).map((element, index: number) => {
+                      return (
+                        <div key={index} className="inline-flex flex-col">
+                          <div className="h-20 w-20 m-2">
+                            <img src={elements[element].image} className="h-full" />
                           </div>
-                        )
-                      })}
-                    </div>
-                  )
-                })}
-              </div>
+                          {panels[element]?.map((panel: any, index: number) => {
+                            return (
+                              <div key={index} className="h-20 w-20 m-2 cursor-pointer" onClick={() => selectCharacter(panel)}>
+                                <img src={`assets/Characters/Thumbnail/${panel?.image}`} alt="" />
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              </Transition>
+          )
+        }
+        <div className="flex">
+          <div className="flex flex-col items-end">
+            <div className="w-80 text-2xl font-bold text-center text-white bg-yellow-600">
+              <p>{players[1]?.name} {user.name === players[1]?.name ? '(You)' : ''}</p>
             </div>
-            <div className="flex flex-col justify-center">
+            <div>
               {[...player2Picks].map((character: Character, index) => {
                 return (
-                  <div key={index} className={`h-24 w-48 border-2 border-green-400 rounded-md bg-gray-800 bg-opacity-70 my-2 first:mt-0 last:mb-0 ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
-                    <img src={character?.panel} alt="" className="object-cover object-center h-full w-full" />
+                  <div key={index} className={`${noOfSelection < 4 ? 'h-40' : 'h-32'} ${user.isHost ? 'w-96' : 'w-80'} border-4 border-yellow-600 rounded-md bg-gray-800 bg-opacity-70 last:mr-0 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
+                    {
+                      character?.image && (
+                      <Transition
+                        show={!!character}
+                        enter="transition-opacity duration-300"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="transition-opacity duration-300"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                        className={`${noOfSelection < 4 ? 'h-40' : 'h-32'} ${user.isHost ? 'w-96' : 'w-80'}`}
+                      >
+                        <img src={`assets/Characters/Admin Panel/${character?.image}`} alt="" className="object-cover object-center h-full w-full" />
+                      </Transition>
+                      )
+                    }
                   </div>
                 )
               })}
             </div>
           </div>
-          <div className="flex justify-between">
-            <div className="flex justify-center">
-              {[...player1Bans].map((character: Character, index) => {
-                return (
-                  <div key={index} className={`relative h-20 w-36 border-2 border-red-400 rounded-md bg-gray-800 bg-opacity-70 mx-2 first:ml-0 last:mr-0 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
-                    <img src={character?.panel} alt="" className="object-cover object-center h-full w-full" />
-                    {character && <div className="absolute top-0 left-0 h-full w-full z-10 bg-red-900 bg-opacity-40" />}
-                  </div>
-                )
-              })}
+        </div>
+      </div>
+      <div className="flex justify-between">
+        <div className="flex justify-center">
+          {[...player1Bans].map((character: Character, index) => {
+            return (
+              <div key={index} className={`relative h-20 w-32 border-4 border-red-400 rounded-md bg-gray-800 bg-opacity-70 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
+                {
+                  character?.image && (
+                  <Transition
+                    appear={true}
+                    show={!!character}
+                    enter="transition-opacity duration-300"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="transition-opacity duration-300"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                    className="h-20 w-32"
+                  >
+                    <img src={`assets/Characters/Panel/${character?.image}`} alt="" className="object-cover object-center h-full w-full" />
+                  </Transition>
+                  )
+                }
+                {character && <div className="absolute top-0 left-0 h-full w-full z-10 bg-red-900 bg-opacity-40" />}
+              </div>
+            )
+          })}
+        </div>
+        {
+          withTimer === 'Yes' &&
+          (
+            <div className="flex w-36 justify-center text-white bg-gray-800 bg-opacity-70 border-4 border-yellow-600 ">
+              <span className="text-6xl font-bold">{time}</span>
             </div>
-            <div className="flex flex-row-reverse justify-center">
-              {[...player2Bans].map((character: Character, index) => {
-                return (
-                  <div key={index} className={`relative h-20 w-36 border-2 border-red-400 rounded-md bg-gray-800 bg-opacity-70 mx-2 first:mr-0 last:ml-0 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
-                    <img src={character?.panel} alt="" className="object-cover object-center h-full w-full" />
-                    {character && <div className="absolute top-0 left-0 h-full w-full z-10 bg-red-900 bg-opacity-40" />}
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </>
-      }
+          )
+        }
+        <div className="flex flex-row-reverse justify-center">
+          {[...player2Bans].map((character: Character, index) => {
+            return (
+              <div key={index} className={`relative h-20 w-32 border-4 border-red-400 rounded-md bg-gray-800 bg-opacity-70 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
+                {
+                  character?.image && (
+                  <Transition
+                    appear={true}
+                    show={!!character}
+                    enter="transition-opacity duration-300"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="transition-opacity duration-300"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                    className="h-20 w-32"
+                  >
+                    <img src={`assets/Characters/Panel/${character?.image}`} alt="" className="object-cover object-center h-full w-full" />
+                  </Transition>
+                  )
+                }
+                {character && <div className="absolute top-0 left-0 h-full w-full z-10 bg-red-900 bg-opacity-40" />}
+              </div>
+            )
+          })}
+        </div>
+      </div>
     </div>
   )
 }

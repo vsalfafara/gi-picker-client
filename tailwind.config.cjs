@@ -8,7 +8,7 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        'sumeru': "url('/assets/Background/bg.webp')",
+        'sumeru': "url('/assets/Background/3.4.webp')",
       }
     }
   },

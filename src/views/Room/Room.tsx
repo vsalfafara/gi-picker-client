@@ -96,7 +96,7 @@ const Room = () => {
 
   return (
     <>
-      <div className='inset-0 flex items-center justify-center'>
+      <div className='h-full flex justify-center items-center'>
         {
           user.isHost ? 
           <div className="mr-2">
