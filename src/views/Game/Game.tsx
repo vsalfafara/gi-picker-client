@@ -412,13 +412,13 @@ const Game = () => {
       <div className="flex justify-between mb-4">
         <div className="flex">
           <div className="flex flex-col items-start">
-            <div className="w-80 text-2xl font-bold text-center text-white bg-yellow-600">
+            <div className={`${user.isHost ? 'sm:w-48 md:w-72 lg:w-96' : 'sm:w-32 md:w-56 lg:w-80'} text-2xl font-bold text-center text-white bg-yellow-600`}>
               <p>{players[0]?.name} {user.name === players[0]?.name ? '(You)' : ''}</p>
             </div>
             <div>
               {[...player1Picks].map((character: Character, index) => {
                 return (
-                  <div key={index} className={`${noOfSelection < 4 ? 'h-40' : 'h-32'} ${user.isHost ? 'w-96' : 'w-80'} border-4 border-yellow-600 rounded-md bg-gray-800 bg-opacity-70 last:mr-0 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
+                  <div key={index} className={`${noOfSelection < 4 ? 'h-40' : 'h-32'} ${user.isHost ? 'sm:w-48 md:w-72 lg:w-96' : 'sm:w-32 md:w-56 lg:w-80'} border-4 border-yellow-600 rounded-md bg-gray-800 bg-opacity-70 last:mr-0 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
                     {
                       character?.image && (
                       <Transition
@@ -430,7 +430,7 @@ const Game = () => {
                         leave="transition-opacity duration-300"
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
-                        className={`${noOfSelection < 4 ? 'h-40' : 'h-32'} ${user.isHost ? 'w-96' : 'w-80'}`}
+                        className={`${noOfSelection < 4 ? 'h-40' : 'h-32'} ${user.isHost ? 'sm:w-48 md:w-72 lg:w-96' : 'sm:w-32 md:w-56 lg:w-80'}`}
                       >
                         <img src={`assets/Characters/Admin Panel/${character?.image}`} alt="" className="object-cover object-center h-full w-full" />
                       </Transition>
@@ -474,14 +474,14 @@ const Game = () => {
                   <div className="flex justify-center">
                     {Object.keys(elements).map((element, index: number) => {
                       return (
-                        <div key={index} className="inline-flex flex-col">
-                          <div className="h-20 w-20 m-2">
-                            <img src={elements[element].image} className="h-full" />
+                        <div key={index} className="inline-flex flex-col max-w-20 w-full">
+                          <div className="max-w-20 h-auto w-auto m-2">
+                            <img src={elements[element].image} className="h-auto w-full" />
                           </div>
                           {panels[element]?.map((panel: any, index: number) => {
                             return (
-                              <div key={index} className="h-20 w-20 m-2 cursor-pointer" onClick={() => selectCharacter(panel)}>
-                                <img src={`assets/Characters/Thumbnail/${panel?.image}`} alt="" />
+                              <div key={index} className="max-w-20 h-auto m-2 cursor-pointer" onClick={() => selectCharacter(panel)}>
+                                <img src={`assets/Characters/Thumbnail/${panel?.image}`} className="h-auto w-auto" />
                               </div>
                             )
                           })}
@@ -495,13 +495,13 @@ const Game = () => {
         }
         <div className="flex">
           <div className="flex flex-col items-end">
-            <div className="w-80 text-2xl font-bold text-center text-white bg-yellow-600">
+            <div className={`${user.isHost ? 'sm:w-48 md:w-72 lg:w-96' : 'sm:w-32 md:w-56 lg:w-80'} text-2xl font-bold text-center text-white bg-yellow-600`}>
               <p>{players[1]?.name} {user.name === players[1]?.name ? '(You)' : ''}</p>
             </div>
             <div>
               {[...player2Picks].map((character: Character, index) => {
                 return (
-                  <div key={index} className={`${noOfSelection < 4 ? 'h-40' : 'h-32'} ${user.isHost ? 'w-96' : 'w-80'} border-4 border-yellow-600 rounded-md bg-gray-800 bg-opacity-70 last:mr-0 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
+                  <div key={index} className={`${noOfSelection < 4 ? 'h-40' : 'h-32'} ${user.isHost ? 'sm:w-48 md:w-72 lg:w-96' : 'sm:w-32 md:w-56 lg:w-80'} border-4 border-yellow-600 rounded-md bg-gray-800 bg-opacity-70 last:mr-0 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
                     {
                       character?.image && (
                       <Transition
@@ -512,7 +512,7 @@ const Game = () => {
                         leave="transition-opacity duration-300"
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
-                        className={`${noOfSelection < 4 ? 'h-40' : 'h-32'} ${user.isHost ? 'w-96' : 'w-80'}`}
+                        className={`${noOfSelection < 4 ? 'h-40' : 'h-32'} ${user.isHost ? 'sm:w-48 md:w-72 lg:w-96' : 'sm:w-32 md:w-56 lg:w-80'}`}
                       >
                         <img src={`assets/Characters/Admin Panel/${character?.image}`} alt="" className="object-cover object-center h-full w-full" />
                       </Transition>
@@ -529,7 +529,7 @@ const Game = () => {
         <div className="flex justify-center">
           {[...player1Bans].map((character: Character, index) => {
             return (
-              <div key={index} className={`relative h-20 w-32 border-4 border-red-400 rounded-md bg-gray-800 bg-opacity-70 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
+              <div key={index} className={`relative sm:h-16 md:h-16 lg:h-20 sm:w-24 md:w-28 lg:w-32 border-4 border-red-400 rounded-md bg-gray-800 bg-opacity-70 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
                 {
                   character?.image && (
                   <Transition
@@ -541,7 +541,7 @@ const Game = () => {
                     leave="transition-opacity duration-300"
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
-                    className="h-20 w-32"
+                    className="sm:h-14 md:h-16 lg:h-20 sm:w-24 md:w-28 lg:w-32"
                   >
                     <img src={`assets/Characters/Panel/${character?.image}`} alt="" className="object-cover object-center h-full w-full" />
                   </Transition>
@@ -563,7 +563,7 @@ const Game = () => {
         <div className="flex flex-row-reverse justify-center">
           {[...player2Bans].map((character: Character, index) => {
             return (
-              <div key={index} className={`relative h-20 w-32 border-4 border-red-400 rounded-md bg-gray-800 bg-opacity-70 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
+              <div key={index} className={`relative sm:h-16 md:h-16 lg:h-20 sm:w-24 md:w-28 lg:w-32 border-4 border-red-400 rounded-md bg-gray-800 bg-opacity-70 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
                 {
                   character?.image && (
                   <Transition
@@ -575,7 +575,7 @@ const Game = () => {
                     leave="transition-opacity duration-300"
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
-                    className="h-20 w-32"
+                    className="sm:h-16 md:h-16 lg:h-20 sm:w-24 md:w-28 lg:w-32"
                   >
                     <img src={`assets/Characters/Panel/${character?.image}`} alt="" className="object-cover object-center h-full w-full" />
                   </Transition>
