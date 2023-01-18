@@ -1,6 +1,6 @@
 import Button from "@/components/Button/Button"
 import Input from "@/components/Input/Input"
-import { Character, characterExists, Elements, filterCharacters, getPanels, NoPick, removeCharacter } from "@/data/data"
+import useImagePreloader, { Character, Characters, characterExists, Elements, filterCharacters, getPanels, NoPick, removeCharacter } from "@/data/data"
 import Dialog from "@/components/Dialog/Dialog"
 import { useEffect, useState } from "react"
 import { useSearchParams, useNavigate } from "react-router-dom"
@@ -9,20 +9,25 @@ import { lsGetUser, lsGetPlayer } from "@/storage/localStorage"
 import { User } from "@/types/storage"
 import { Transition } from "@headlessui/react"
 
-type Player = {
-  id: string
-  name: string
-  roomId: string
-  isHost: boolean
-}
-
 type Turn = {
   player: User
   selection: number
   turn: number
 }
 
+const imageTypes: string[] = []
+imageTypes.push('Thumbnail')
+imageTypes.push('Splash')
+imageTypes.push('Panel')
+imageTypes.push('Admin Panel')
+const imageList: string[] = Characters.map((character: Character) => {
+  return imageTypes.map((type: string) => {
+    return `assets/Characters/${type}/${character.image}`
+  })
+}).flat()
+
 const Game = () => {
+  const { imagesPreloaded } = useImagePreloader(imageList)
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const noOfSelection = Number(params.get('mode')?.charAt(0))
@@ -145,6 +150,9 @@ const Game = () => {
         setPlayer1Bans(newArr)
       }
     }
+    if (user.isHost) {
+      socket.emit('startTimer', user.roomId)
+    }
   })
 
   let draftStartInterval: ReturnType<typeof setTimeout>
@@ -198,7 +206,6 @@ const Game = () => {
   socket.off('select').on('select', (selection: number) => {
     setSelectionType(selection)
     setSelectType(0)
-    socket.emit('startTimer', user.roomId)
   })
 
   socket.off('goBack').on('goBack', () => {
@@ -236,6 +243,7 @@ const Game = () => {
       }
       removeCharacter(data.character.name)
       setPanels(getPanels())
+      socket.emit('stopTimer')
       if (data.character.name !== 'No Pick') {
         setSplash(data.character)
         setShowPanel(false)
@@ -252,6 +260,7 @@ const Game = () => {
         }, 3000)
         let panelDelay = setTimeout(() => {
           setShowPanel(true)
+          clearTimeout(panelDelay)
         }, 3400)
       }
     }
