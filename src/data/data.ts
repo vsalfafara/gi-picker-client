@@ -74,6 +74,14 @@ export const Characters: Character[] = [
     adminPanel: 'assets/Characters/Admin Panel/Aloy.webp'
   },
   {
+    name: 'Alhaitham',
+    vision: Elements.Dendro.name,
+    image: 'assets/Characters/Panel/Alhaitham.webp',
+    thumbnail: 'assets/Characters/Thumbnail/Alhaitham.webp',
+    panel: 'assets/Characters/Panel/Alhaitham.webp',
+    adminPanel: 'assets/Characters/Admin Panel/Alhaitham.webp'
+  },
+  {
     name: 'Amber',
     vision: Elements.Pyro.name,
     image: 'assets/Characters/Panel/Amber.webp',
@@ -512,6 +520,14 @@ export const Characters: Character[] = [
     thumbnail: 'assets/Characters/Thumbnail/Yanfei.webp',
     panel: 'assets/Characters/Panel/Yanfei.webp',
     adminPanel: 'assets/Characters/Admin Panel/Yanfei.webp'
+  },
+  {
+    name: 'Yaoyao',
+    vision: Elements.Dendro.name,
+    image: 'assets/Characters/Panel/Yaoyao.webp',
+    thumbnail: 'assets/Characters/Thumbnail/Yaoyao.webp',
+    panel: 'assets/Characters/Panel/Yaoyao.webp',
+    adminPanel: 'assets/Characters/Admin Panel/Yaoyao.webp'
   },
   {
     name: 'Yelan',
