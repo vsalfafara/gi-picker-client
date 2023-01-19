@@ -384,7 +384,7 @@ const Game = () => {
           <Button size="sm" type="danger" onClick={closeHelp}>Got it!</Button>
         </div>
       </Dialog>
-      <Dialog title={`${selectionType ? 'Pick' : 'Ban'} ${selectedCharacter?.name}?`} show={showDialog} handleCloseOutside={closeDialog}>
+      <Dialog title={`${selectionType ? 'Pick' : 'Ban'} ${selectedCharacter?.name}?`} show={showDialog && (withTimer === 'Yes' && time > 1)} handleCloseOutside={closeDialog}>
         <div className='mt-2'>
           <p className='text-sm text-gray-500'>
             Do you want to {selectionType ? 'pick' : 'ban'} {selectedCharacter?.name}?
@@ -395,7 +395,7 @@ const Game = () => {
           {
             selectionType
             ? <Button size="sm" onClick={pickCharacter}>Yes, pick!</Button>
-            : <Button size="sm" onClick={banCharacter} disabled={(withTimer === 'Yes' && time < 2)}>Yes, ban!</Button>
+            : <Button size="sm" onClick={banCharacter}>Yes, ban!</Button>
           }
         </div>
       </Dialog>
