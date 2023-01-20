@@ -469,7 +469,7 @@ const Game = () => {
           !user.isHost &&
             (
               <Transition
-                show={showPanel}
+                show={showPanel && selectionType > -1}
                 enter="transition-opacity duration-300"
                 enterFrom="opacity-0"
                 enterTo="opacity-100"
