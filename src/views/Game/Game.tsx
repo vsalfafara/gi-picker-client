@@ -2,12 +2,13 @@ import Button from "@/components/Button/Button"
 import Input from "@/components/Input/Input"
 import useImagePreloader, { Character, Characters, characterExists, Elements, filterCharacters, getPanels, NoPick, removeCharacter } from "@/data/data"
 import Dialog from "@/components/Dialog/Dialog"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useSearchParams, useNavigate } from "react-router-dom"
 import socket from "@/socket/socket"
 import { lsGetUser, lsGetPlayer } from "@/storage/localStorage"
 import { User } from "@/types/storage"
 import { Transition } from "@headlessui/react"
+import NotificationContext from '../../context/NotifcationContext'
 
 type Turn = {
   player: User
@@ -29,6 +30,7 @@ const imageList: string[] = Characters.map((character: Character) => {
 const Game = () => {
   const { imagesPreloaded } = useImagePreloader(imageList)
   const navigate = useNavigate()
+  const {notificationHandler} = useContext(NotificationContext)
   const [params] = useSearchParams()
   const noOfSelection = Number(params.get('mode')?.charAt(0))
   const withTimer = params.get('withTimer')
@@ -117,6 +119,14 @@ const Game = () => {
     }
     return
   }, [selectType])
+
+  socket.off('disconnected').on('disconnected', (name: string) => {
+    notificationHandler({
+      type: 'danger',
+      message: `${name} disconnected`,
+      withIcon: true
+    })
+  })
 
   socket.off('announceTurn').on('announceTurn', (turn: Turn) => {
     setTurn(turn)
