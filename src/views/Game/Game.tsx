@@ -2,12 +2,13 @@ import Button from "@/components/Button/Button"
 import Input from "@/components/Input/Input"
 import useImagePreloader, { Character, Characters, characterExists, Elements, filterCharacters, getPanels, NoPick, removeCharacter } from "@/data/data"
 import Dialog from "@/components/Dialog/Dialog"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useSearchParams, useNavigate } from "react-router-dom"
 import socket from "@/socket/socket"
 import { lsGetUser, lsGetPlayer } from "@/storage/localStorage"
 import { User } from "@/types/storage"
 import { Transition } from "@headlessui/react"
+import NotificationContext from '../../context/NotifcationContext'
 
 type Turn = {
   player: User
@@ -29,6 +30,7 @@ const imageList: string[] = Characters.map((character: Character) => {
 const Game = () => {
   const { imagesPreloaded } = useImagePreloader(imageList)
   const navigate = useNavigate()
+  const {notificationHandler} = useContext(NotificationContext)
   const [params] = useSearchParams()
   const noOfSelection = Number(params.get('mode')?.charAt(0))
   const withTimer = params.get('withTimer')
@@ -39,10 +41,10 @@ const Game = () => {
   const [user] = useState(lsGetUser())
   const [players, setPlayers] = useState<User[]>([])
   const [player] = useState(lsGetPlayer())
-  const [_, setTurn] = useState<Turn>()
+  const [turn, setTurn] = useState<Turn>()
   const [selectionType, setSelectionType] = useState(-1)
   const [showDialog, setShowDialog] = useState(false)
-  const [selectedCharacter, setSelectedCharacter] = useState<Character>()
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null)
   const [player1Picks, setPlayer1Picks] = useState<any[]>(new Array(noOfSelection))
   const [player1Bans, setPlayer1Bans] = useState<any[]>(new Array(noOfSelection))
   const [player2Picks, setPlayer2Picks] = useState<any[]>(new Array(noOfSelection))
@@ -117,6 +119,14 @@ const Game = () => {
     }
     return
   }, [selectType])
+
+  socket.off('disconnected').on('disconnected', (name: string) => {
+    notificationHandler({
+      type: 'danger',
+      message: `${name} disconnected`,
+      withIcon: true
+    })
+  })
 
   socket.off('announceTurn').on('announceTurn', (turn: Turn) => {
     setTurn(turn)
@@ -278,6 +288,7 @@ const Game = () => {
 
   function closeDialog() {
     setShowDialog(false)
+    setSelectedCharacter(null)
   }
 
   function start() {
@@ -307,6 +318,8 @@ const Game = () => {
     if (selectionType > -1) {
       setSelectedCharacter(character)
       openDialog()
+    } else {
+      closeDialog()
     }
   }
 
@@ -384,7 +397,7 @@ const Game = () => {
           <Button size="sm" type="danger" onClick={closeHelp}>Got it!</Button>
         </div>
       </Dialog>
-      <Dialog title={`${selectionType ? 'Pick' : 'Ban'} ${selectedCharacter?.name}?`} show={showDialog && (withTimer === 'Yes' && time > 1)} handleCloseOutside={closeDialog}>
+      <Dialog title={`${selectionType ? 'Pick' : 'Ban'} ${selectedCharacter?.name}?`} show={showDialog || (withTimer === 'Yes' && time > 1)} handleCloseOutside={closeDialog}>
         <div className='mt-2'>
           <p className='text-sm text-gray-500'>
             Do you want to {selectionType ? 'pick' : 'ban'} {selectedCharacter?.name}?
@@ -459,7 +472,7 @@ const Game = () => {
           !user.isHost &&
             (
               <Transition
-                show={showPanel}
+                show={showPanel && selectionType !== -1}
                 enter="transition-opacity duration-300"
                 enterFrom="opacity-0"
                 enterTo="opacity-100"

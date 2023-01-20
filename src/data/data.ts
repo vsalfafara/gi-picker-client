@@ -15,7 +15,7 @@ export type Character = {
 }
 
 type Panel = {
-  [key: string]: Character[]
+  [key: keyof typeof Elements]: Character[]
 }
 
 export const Elements: Element = {
@@ -382,7 +382,7 @@ let modifiedCharacters = [...Characters]
 let availableCharacters = [...modifiedCharacters]
 
 export function getPanels() {
-  return availableCharacters.reduce((result: any, character: Character) => {
+  return availableCharacters.reduce((result: Panel, character: Character) => {
     result[character.vision] = result[character.vision] || []
     result[character.vision].push(character)
     return result

@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from "react"
 
 const NotificationContext = createContext(null as any)
+const notificationDelay = 5000
 
 export const NotifcationProvider = ({children}: any) => {
   const [showNotification, setShowNotification] = useState(false)
@@ -11,7 +12,7 @@ export const NotifcationProvider = ({children}: any) => {
   useEffect(() => {
     const time = setTimeout(() => {
       setShowNotification(false)
-    }, 5000)
+    }, notificationDelay)
     return () => clearTimeout(time)
   }, [showNotification])
 
