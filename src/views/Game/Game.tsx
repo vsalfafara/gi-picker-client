@@ -72,7 +72,7 @@ const Game = () => {
       socket.off('getAllPlayersInGame')
     }
   }, [])
-  
+
   useEffect(() => {
     const character = characterExists(selectedCharacter?.name)
     if (character) {
@@ -366,7 +366,7 @@ const Game = () => {
 
   function sendChat() {
     const chat = {
-      user: user.name,
+      user: user,
       message: message,
       isHost: user.isHost
     }
@@ -410,11 +410,11 @@ const Game = () => {
             {
               chatArr.map((chat: any, index: number) => {
                 return (
-                  <div key={index} className={`px-4 py-2 m-2 bg-purple-100 ${chat.user === user.name ? 'text-right' : 'text-left'}`}>
-                    <p className="text-sm text-purple-600">
+                  <div key={index} className={`px-4 py-2 m-2 bg-purple-100 ${chat.user.id === user.id ? 'text-right' : 'text-left'}`}>
+                    <p className="text-xs text-purple-600 mb-2">
                       <span>{chat.isHost ? <>👑 </> : ''}{chat.user}</span>
                     </p>
-                    <p>{chat.message}</p>
+                    <p className="text-sm">{chat.message}</p>
                   </div>
                 )
               })
@@ -490,7 +490,7 @@ const Game = () => {
         <div className="flex">
           <div className="flex flex-col items-start">
             <div className={`${user.isHost ? 'sm:w-48 md:w-72 lg:w-96' : 'sm:w-32 md:w-56 lg:w-80'} text-2xl font-bold text-center text-white bg-yellow-600`}>
-              <p>{players[0]?.name} {user.name === players[0]?.name ? '(You)' : ''}</p>
+              <p>{players[0]?.name} {user.id === players[0]?.id ? '(You)' : ''}</p>
             </div>
             <div>
               {[...player1Picks].map((character: Character, index) => {
@@ -573,7 +573,7 @@ const Game = () => {
         <div className="flex">
           <div className="flex flex-col items-end">
             <div className={`${user.isHost ? 'sm:w-48 md:w-72 lg:w-96' : 'sm:w-32 md:w-56 lg:w-80'} text-2xl font-bold text-center text-white bg-yellow-600`}>
-              <p>{players[1]?.name} {user.name === players[1]?.name ? '(You)' : ''}</p>
+              <p>{players[1]?.name} {user.id === players[1]?.id ? '(You)' : ''}</p>
             </div>
             <div>
               {[...player2Picks].map((character: Character, index) => {
