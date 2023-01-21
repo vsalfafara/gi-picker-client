@@ -61,6 +61,10 @@ const Game = () => {
   const [showPanel, setShowPanel] = useState(false)
   const [splash, setSplash] = useState<Character>()
   const [showSplash, setShowSplash] = useState(false)
+  const [showChat, setShowChat] = useState(false)
+  const [chatArr, setChatArr] = useState<any[]>([])
+  const [message, setMessage] = useState('')
+  const [newMessage, setNewMessage] = useState(false)
 
   useEffect(() => {
     socket.emit('getAllPlayersInGame', user.roomId)
@@ -69,19 +73,6 @@ const Game = () => {
     }
   }, [])
   
-  useEffect(() => {
-    socket.on('getAllPlayersInGame', (users: User[]) => {
-      setPlayers(users)
-    })
-    return () => {
-      socket.off('getAllPlayersInRoom');
-    }
-  }, [socket])
-
-  socket.off('getTime').on('getTime', (time: number) => {
-    setTime(time)
-  })
-
   useEffect(() => {
     const character = characterExists(selectedCharacter?.name)
     if (character) {
@@ -120,50 +111,173 @@ const Game = () => {
     return
   }, [selectType])
 
-  socket.off('disconnected').on('disconnected', (name: string) => {
-    notificationHandler({
-      type: 'danger',
-      message: `${name} disconnected`,
-      withIcon: true
+  useEffect(() => {
+  
+    socket.on('getTime', (time: number) => {
+      setTime(time)
     })
-  })
+  
+    socket.on('getAllPlayersInGame', (users: User[]) => {
+      setPlayers(users)
+    })
 
-  socket.off('announceTurn').on('announceTurn', (turn: Turn) => {
-    setTurn(turn)
-    setShowPanel(true)
-    if (turn.selection) {
-      if ((turn.turn < 9 && turn.turn % 2 === 0) || (turn.turn > 8 && turn.turn % 2 !== 0)) {
-        const newArr = [...player2Picks]
-        newArr[pickPointer2] = {
-          forSelection: true
+    socket.on('chat', (chat: any) => {
+      setChatArr(chat)
+      setNewMessage(true)
+    })
+    
+    socket.on('disconnected', (name: string) => {
+      notificationHandler({
+        type: 'danger',
+        message: `${name} disconnected`,
+        withIcon: true
+      })
+    })
+
+    socket.on('announceTurn', (turn: Turn) => {
+      setTurn(turn)
+      setShowPanel(true)
+      if (turn.selection) {
+        if ((turn.turn < 9 && turn.turn % 2 === 0) || (turn.turn > 8 && turn.turn % 2 !== 0)) {
+          const newArr = [...player2Picks]
+          newArr[pickPointer2] = {
+            forSelection: true
+          }
+          setPlayer2Picks(newArr)
+        } else {
+          const newArr = [...player1Picks]
+          newArr[pickPointer1] = {
+            forSelection: true
+          }
+          setPlayer1Picks(newArr)
         }
-        setPlayer2Picks(newArr)
       } else {
-        const newArr = [...player1Picks]
-        newArr[pickPointer1] = {
-          forSelection: true
+        if ((turn.turn < 9 && turn.turn % 2 === 0) || (turn.turn > 8 && turn.turn % 2 !== 0)) {
+          const newArr = [...player2Bans]
+          newArr[banPointer2] = {
+            forSelection: true
+          }
+          setPlayer2Bans(newArr)
+        } else {
+          const newArr = [...player1Bans]
+          newArr[banPointer1] = {
+            forSelection: true
+          }
+          setPlayer1Bans(newArr)
         }
-        setPlayer1Picks(newArr)
       }
-    } else {
-      if ((turn.turn < 9 && turn.turn % 2 === 0) || (turn.turn > 8 && turn.turn % 2 !== 0)) {
-        const newArr = [...player2Bans]
-        newArr[banPointer2] = {
-          forSelection: true
+      if (user.isHost) {
+        socket.emit('startTimer', user.roomId)
+      }
+    })
+    
+    socket.on('noPick', async (selection: number) => {
+      setShowDialog(false)
+      setSelectionType(-1)
+      if (selection) {
+        if (player) {
+          const newArr = [...player2Picks]
+          newArr[pickPointer2] = NoPick
+          setPlayer2Picks(newArr)
+          setPickPointer2((prev: number) => ++prev)
+        } else {
+          const newArr = [...player1Picks]
+          newArr[pickPointer1] = NoPick
+          setPlayer1Picks(newArr)
+          setPickPointer1((prev: number) => ++prev)
         }
-        setPlayer2Bans(newArr)
       } else {
-        const newArr = [...player1Bans]
-        newArr[banPointer1] = {
-          forSelection: true
+        if (player) {
+          const newArr = [...player2Bans]
+          newArr[banPointer2] = NoPick
+          setPlayer2Bans(newArr)
+          setBanPointer2((prev: number) => ++prev)
+        } else {
+          const newArr = [...player1Bans]
+          newArr[banPointer1] = NoPick
+          setPlayer1Bans(newArr)
+          setBanPointer1((prev: number) => ++prev)
         }
-        setPlayer1Bans(newArr)
       }
+      removeCharacterFromPanel(NoPick)
+      nextTurn()
+    })
+
+    socket.on('select', (selection: number) => {
+      setSelectionType(selection)
+      setSelectType(0)
+    })
+
+    socket.on('goBack', () => {
+      socket.emit('stopTimer')
+      navigate(`/room/${user.roomId}`)
+    })
+
+    socket.on('removeCharacter', (data) => {
+      const character = characterExists(data.character.name)
+      if (character || data.character.name === 'No Pick') {
+        if (data.selectionType) {
+          if (data.player) {
+            const newArr = [...player2Picks]
+            newArr[pickPointer2] = data.character
+            setPlayer2Picks(newArr)
+            setPickPointer2((prev: number) => ++prev)
+          } else {
+            const newArr = [...player1Picks]
+            newArr[pickPointer1] = data.character
+            setPlayer1Picks(newArr)
+            setPickPointer1((prev: number) => ++prev)
+          }
+        } else {
+          if (data.player) {
+            const newArr = [...player2Bans]
+            newArr[banPointer2] = data.character
+            setPlayer2Bans(newArr)
+            setBanPointer2((prev: number) => ++prev)
+          } else {
+            const newArr = [...player1Bans]
+            newArr[banPointer1] = data.character
+            setPlayer1Bans(newArr)
+            setBanPointer1((prev: number) => ++prev)
+          }
+        }
+        removeCharacter(data.character.name)
+        setPanels(getPanels())
+        socket.emit('stopTimer')
+        if (data.character.name !== 'No Pick') {
+          setSplash(data.character)
+          setShowPanel(false)
+          let splashDelay = setTimeout(() => {
+            setShowSplash(true)
+            clearTimeout(splashDelay)
+          }, 300)
+          let splashTimeout = setTimeout(() => {
+            setShowSplash(false)
+            if (user.isHost) {
+              nextTurn()
+            }
+            clearTimeout(splashTimeout)
+          }, 3000)
+          let panelDelay = setTimeout(() => {
+            setShowPanel(true)
+            clearTimeout(panelDelay)
+          }, 3400)
+        }
+      }
+    })
+
+    return () => {
+      socket.off('getTime');
+      socket.off('getAllPlayersInRoom');
+      socket.off('chat')
+      socket.off('disconnected')
+      socket.off('announceTurn')
+      socket.off('noPick')
+      socket.off('select')
+      socket.off('goBack')
+      socket.off('removeCharacter')
     }
-    if (user.isHost) {
-      socket.emit('startTimer', user.roomId)
-    }
-  })
+  }, [])
 
   let draftStartInterval: ReturnType<typeof setTimeout>
   socket.off('draftStart').on('draftStart', () => {
@@ -179,101 +293,6 @@ const Game = () => {
 
   socket.off('nextTurn').on('nextTurn', () => {
     nextTurn()
-  })
-
-  socket.off('noPick').on('noPick', async (selection: number) => {
-    setShowDialog(false)
-    setSelectionType(-1)
-    if (selection) {
-      if (player) {
-        const newArr = [...player2Picks]
-        newArr[pickPointer2] = NoPick
-        setPlayer2Picks(newArr)
-        setPickPointer2((prev: number) => ++prev)
-      } else {
-        const newArr = [...player1Picks]
-        newArr[pickPointer1] = NoPick
-        setPlayer1Picks(newArr)
-        setPickPointer1((prev: number) => ++prev)
-      }
-    } else {
-      if (player) {
-        const newArr = [...player2Bans]
-        newArr[banPointer2] = NoPick
-        setPlayer2Bans(newArr)
-        setBanPointer2((prev: number) => ++prev)
-      } else {
-        const newArr = [...player1Bans]
-        newArr[banPointer1] = NoPick
-        setPlayer1Bans(newArr)
-        setBanPointer1((prev: number) => ++prev)
-      }
-    }
-    removeCharacterFromPanel(NoPick)
-    nextTurn()
-  })
-
-  socket.off('select').on('select', (selection: number) => {
-    setSelectionType(selection)
-    setSelectType(0)
-  })
-
-  socket.off('goBack').on('goBack', () => {
-    socket.emit('stopTimer')
-    navigate(`/room/${user.roomId}`)
-  })
-
-  socket.off('removeCharacter').on('removeCharacter', (data) => {
-    const character = characterExists(data.character.name)
-    if (character || data.character.name === 'No Pick') {
-      if (data.selectionType) {
-        if (data.player) {
-          const newArr = [...player2Picks]
-          newArr[pickPointer2] = data.character
-          setPlayer2Picks(newArr)
-          setPickPointer2((prev: number) => ++prev)
-        } else {
-          const newArr = [...player1Picks]
-          newArr[pickPointer1] = data.character
-          setPlayer1Picks(newArr)
-          setPickPointer1((prev: number) => ++prev)
-        }
-      } else {
-        if (data.player) {
-          const newArr = [...player2Bans]
-          newArr[banPointer2] = data.character
-          setPlayer2Bans(newArr)
-          setBanPointer2((prev: number) => ++prev)
-        } else {
-          const newArr = [...player1Bans]
-          newArr[banPointer1] = data.character
-          setPlayer1Bans(newArr)
-          setBanPointer1((prev: number) => ++prev)
-        }
-      }
-      removeCharacter(data.character.name)
-      setPanels(getPanels())
-      socket.emit('stopTimer')
-      if (data.character.name !== 'No Pick') {
-        setSplash(data.character)
-        setShowPanel(false)
-        let splashDelay = setTimeout(() => {
-          setShowSplash(true)
-          clearTimeout(splashDelay)
-        }, 300)
-        let splashTimeout = setTimeout(() => {
-          setShowSplash(false)
-          if (user.isHost) {
-            nextTurn()
-          }
-          clearTimeout(splashTimeout)
-        }, 3000)
-        let panelDelay = setTimeout(() => {
-          setShowPanel(true)
-          clearTimeout(panelDelay)
-        }, 3400)
-      }
-    }
   })
 
   function handleFilter(value: string) {
@@ -336,6 +355,28 @@ const Game = () => {
     setShowHelp(true)
   }
 
+  function closeChat() {
+    setShowChat(false)
+  }
+
+  function openChat() {
+    setShowChat(true)
+    setNewMessage(false)
+  }
+
+  function sendChat() {
+    const chat = {
+      user: user.name,
+      message: message,
+      isHost: user.isHost
+    }
+    let newChat = chatArr
+    newChat.push(chat)
+    setChatArr(newChat)
+    setMessage('')
+    socket.emit('chat', newChat)
+  }
+
   function setBackgroundColor(character: Character) {
     const bgOpacity = 'bg-opacity-50'
     if (character?.vision === 'Anemo') return 'bg-green-300 ' + bgOpacity
@@ -363,6 +404,28 @@ const Game = () => {
       >
         <h1 className="font-bold text-white text-6xl">Draft Starting!</h1>
       </Transition>
+      <Dialog title="Chat" show={showChat} handleCloseOutside={closeChat}>
+        <>
+          <div className="mb-4 border-2 border-gray-300 px-1 h-96 overflow-x-scroll">
+            {
+              chatArr.map((chat: any, index: number) => {
+                return (
+                  <div key={index} className={`px-4 py-2 m-2 bg-purple-100 ${chat.user === user.name ? 'text-right' : 'text-left'}`}>
+                    <p className="text-sm text-purple-600">
+                      <span>{chat.isHost ? <>👑 </> : ''}{chat.user}</span>
+                    </p>
+                    <p>{chat.message}</p>
+                  </div>
+                )
+              })
+            }
+          </div>
+          <div className="flex items-center">
+            <Input type="text" value={message} placeholder="Type a message here" onChange={(value: string) => setMessage(value)}></Input>
+            <Button size="sm" type="primary" onClick={sendChat}>Send</Button>
+          </div>
+        </>
+      </Dialog>
       <Dialog title='How to play' show={showHelp} handleCloseOutside={closeHelp} width="w-[600px]">
         <div className='mt-2'>
           <p className='text-sm text-gray-500 mb-2'>
@@ -418,6 +481,10 @@ const Game = () => {
           </>
         )}
         <Button size="sm" type="danger" onClick={() => openHelp()}>Help</Button>
+        <Button size="sm" type="success" onClick={() => openChat()}>
+          { newMessage && <span className="absolute -top-2 -right-2 h-4 w-4 bg-red-500 rounded-full" />}
+          Chat
+        </Button>
       </div>
       <div className="flex justify-between mb-4">
         <div className="flex">
