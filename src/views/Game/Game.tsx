@@ -123,7 +123,6 @@ const Game = () => {
 
     socket.on('announceTurn', (turnData: Turn) => {
       setTurn(turnData)
-      console.log(turnData)
       const showTurnDelay = setTimeout(() => {
         setShowTurn(true)
         if (turnData.player.id === user.id) {
@@ -181,11 +180,9 @@ const Game = () => {
       }
       if (user.isHost) {
         socket.emit('stopTimer')
-        console.log('host stopped time')
         const delay = data.character.name === 'No Pick' ? 0 : 3000
         const turnDelay = setTimeout(() => {
           nextTurn()
-          console.log('host next turn')
           clearTimeout(turnDelay)
         }, delay)
       }
