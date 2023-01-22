@@ -151,6 +151,7 @@ const Room = () => {
                   <Radio name='timer' id='15' label='15' value={15} onChange={(value: number) => setTime(Number(value))} />
                   <Radio name='timer' id='30' label='30' value={30} onChange={(value: number) => setTime(Number(value))} />
                   <Radio name='timer' id='45' label='45' value={45} onChange={(value: number) => setTime(Number(value))} />
+                  <Radio name='timer' id='60' label='60' value={60} onChange={(value: number) => setTime(Number(value))} />
                 </div>
               </FormItem>
             }
