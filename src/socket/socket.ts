@@ -1,15 +1,15 @@
 import io from "socket.io-client"
-import { lsSetPlayer, lsSetUser } from "../storage/localStorage"
+import { ssSetPlayer, ssSetUser } from "../storage/session"
 import { User } from "../types/storage"
 
 const socket = io(import.meta.env.VITE_SOCKET)
 
 socket.on('setUser', (user: User) => {
-  lsSetUser(user)
+  ssSetUser(user)
 })
 
 socket.on('setPlayer', (player: number) => {
-  lsSetPlayer(player)
+  ssSetPlayer(player)
 })
 
 export default socket

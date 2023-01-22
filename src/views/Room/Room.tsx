@@ -8,7 +8,7 @@ import FormItem from '../../components/FormItem/FormItem'
 import Radio from '../../components/Input/Radio'
 import NotificationContext from '../../context/NotifcationContext'
 import socket from  '../../socket/socket'
-import { lsGetUser } from '../../storage/localStorage'
+import { ssGetUser, ssSetSelection } from '../../storage/session'
 import { User } from '../../types/storage'
 
 const Room = () => {
@@ -22,7 +22,7 @@ const Room = () => {
   const [players, setPlayers] = useState<User[]>([])
   const [firstPick, setFirstPick] = useState<string>()
   const { roomId } = useParams()
-  const [user, _] = useState(lsGetUser())
+  const [user, _] = useState(ssGetUser())
 
   useEffect(() => {
     if (user) {
@@ -39,7 +39,25 @@ const Room = () => {
   useEffect(() => {
     socket.on('getAllPlayersInRoom', (users: User[]) => setPlayers(users))
     resetCharacters()
-    socket.on('startGame', ({ mode, withTimer }) => {
+    socket.on('startGame', ({ mode, withTimer, game }) => {
+    const noOfSelections = Number(mode.charAt(0))
+
+    const selectionArr = game.players.map((player: User) => {
+      return {
+        player: player,
+        selection: {
+          bans: {
+            characters: new Array(noOfSelections),
+            pointer: 0
+          },
+          picks: {
+            characters: new Array(noOfSelections),
+            pointer: 0
+          }
+        },
+      }
+    })
+    ssSetSelection(selectionArr)
       navigate(`/game?mode=${mode}&withTimer=${withTimer}`)
     })
     return () => {

@@ -5,7 +5,7 @@ import Card from '../../components/Card/Card';
 import Input from '../../components/Input/Input';
 import NotificationContext from '../../context/NotifcationContext';
 import socket from '../../socket/socket'
-import { clearLocalStorage } from '../../storage/localStorage';
+import { clearLocalStorage } from '../../storage/session';
 import { useParams } from 'react-router-dom'
 import { User } from '../../types/storage';
 import FormItem from '../../components/FormItem/FormItem';

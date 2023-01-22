@@ -10,7 +10,7 @@ type Type = {
 export type Character = {
   name: string
   vision: string
-  image: string
+  image: string | null
   forSelection?: boolean
 }
 
