@@ -411,6 +411,19 @@ export function resetCharacters() {
   availableCharacters = [...modifiedCharacters]
 }
 
+const imageTypes: string[] = []
+imageTypes.push('Thumbnail')
+imageTypes.push('Splash')
+imageTypes.push('Panel')
+imageTypes.push('Admin Panel')
+imageTypes.push('VS')
+
+export const imageList: string[] = Characters.map((character: Character) => {
+  return imageTypes.map((type: string) => {
+    return `assets/Characters/${type}/${character.image}`
+  })
+}).flat()
+
 import { useEffect, useState } from 'react'
 
 function preloadImage (src: string) {
