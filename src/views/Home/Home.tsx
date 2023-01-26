@@ -5,7 +5,7 @@ import Card from '../../components/Card/Card';
 import Input from '../../components/Input/Input';
 import NotificationContext from '../../context/NotifcationContext';
 import socket from '../../socket/socket'
-import { clearLocalStorage } from '../../storage/session';
+import { clearSessionStorage } from '../../storage/session';
 import { useParams } from 'react-router-dom'
 import { User } from '../../types/storage';
 import FormItem from '../../components/FormItem/FormItem';
@@ -17,7 +17,7 @@ const Home = () => {
   const [name, setName] = useState<string>('')
   const { roomId } = useParams()
 
-  clearLocalStorage()
+  clearSessionStorage()
 
   const createRoom = () => {
     const form = {

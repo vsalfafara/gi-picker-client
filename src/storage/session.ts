@@ -39,8 +39,20 @@ export const ssGetSelection = () => {
   return false
 }
 
+export const ssSetAutoban = (autoban: any) => {
+  const encryptedAutoban = CryptoJS.AES.encrypt(JSON.stringify(autoban), key).toString();
+  sessionStorage.setItem('autoban', encryptedAutoban)
+}
 
+export const ssGetAutoban = () => {
+  const autoban = sessionStorage.getItem('autoban')
+  if (autoban) {
+    const decryptedAutoban = CryptoJS.AES.decrypt(autoban, key)
+    return JSON.parse(decryptedAutoban.toString(CryptoJS.enc.Utf8))
+  }
+  return false
+}
 
-export const clearLocalStorage = () => {
+export const clearSessionStorage = () => {
   sessionStorage.clear();
 }

@@ -7,11 +7,49 @@ type Type = {
   image: string
 }
 
+export const Rarities = {
+  None: 'None',
+  Rare: 'Rare',
+  VeryRare: 'VeryRare'
+}
+
+export const Sexes = {
+  Male: 'Male',
+  Female: 'Female',
+  Any: 'Any'
+}
+
+export const BodyTypes = {
+  Child: 'Child',
+  Teenager: 'Teenager',
+  Adult: 'Adult'
+}
+
+export const Weapons = {
+  Sword: 'Sword',
+  Claymore: 'Claymore',
+  Polearm: 'Polearm',
+  Bow: 'Bow',
+  Catalyst: 'Catalyst'
+}
+
+export const Regions = {
+  Mondstadt: 'Mondstadt',
+  Liyue: 'Liyue',
+  Inazuma: 'Inazuma',
+  Sumeru: 'Sumeru',
+  None: 'None'
+}
+
 export type Character = {
   name: string
   vision: string
   image: string | null
-  forSelection?: boolean
+  rarity?: string
+  sex?: string
+  bodyType?: string
+  weapon?: string
+  region?: string
 }
 
 type Panel = {
@@ -57,324 +95,639 @@ export const Characters: Character[] = [
   {
     name: 'Albedo',
     vision: Elements.Geo.name,
-    image: 'Albedo.webp'
+    image: 'Albedo.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Sword,
+    region: Regions.Mondstadt
   },
   {
     name: 'Aloy',
     vision: Elements.Cryo.name,
-    image: 'Aloy.webp'
+    image: 'Aloy.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Bow,
+    region: Regions.None
   },
   {
     name: 'Alhaitham',
     vision: Elements.Dendro.name,
-    image: 'Alhaitham.webp'
+    image: 'Alhaitham.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Sword,
+    region: Regions.Sumeru
   },
   {
     name: 'Amber',
     vision: Elements.Pyro.name,
-    image: 'Amber.webp'
+    image: 'Amber.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Bow,
+    region: Regions.Mondstadt
   },
   {
     name: 'Arataki Itto',
     vision: Elements.Geo.name,
-    image: 'Arataki Itto.webp'
+    image: 'Arataki Itto.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Claymore,
+    region: Regions.Inazuma
   },
   {
     name: 'Barbara',
     vision: Elements.Hydro.name,
-    image: 'Barbara.webp'
+    image: 'Barbara.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Catalyst,
+    region: Regions.Mondstadt
   },
   {
     name: 'Beidou',
     vision: Elements.Electro.name,
-    image: 'Beidou.webp'
+    image: 'Beidou.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Claymore,
+    region: Regions.Liyue
   },
   {
     name: 'Bennett',
     vision: Elements.Pyro.name,
-    image: 'Bennett.webp'
+    image: 'Bennett.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Sword,
+    region: Regions.Mondstadt
   },
   {
     name: 'Candace',
     vision: Elements.Hydro.name,
-    image: 'Candace.webp'
+    image: 'Candace.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Polearm,
+    region: Regions.Sumeru
   },
   {
     name: 'Chongyun',
     vision: Elements.Cryo.name,
-    image: 'Chongyun.webp'
+    image: 'Chongyun.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Claymore,
+    region: Regions.Liyue
   },
   {
     name: 'Collei',
     vision: Elements.Dendro.name,
-    image: 'Collei.webp'
+    image: 'Collei.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Bow,
+    region: Regions.Sumeru
   },
   {
     name: 'Cyno',
     vision: Elements.Electro.name,
-    image: 'Cyno.webp'
+    image: 'Cyno.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Polearm,
+    region: Regions.Sumeru
   },
   {
     name: 'Diluc',
     vision: Elements.Pyro.name,
-    image: 'Diluc.webp'
+    image: 'Diluc.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Claymore,
+    region: Regions.Mondstadt
   },
   {
     name: 'Diona',
     vision: Elements.Cryo.name,
-    image: 'Diona.webp'
+    image: 'Diona.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Child,
+    weapon: Weapons.Bow,
+    region: Regions.Mondstadt
   },
   {
     name: 'Dori',
     vision: Elements.Electro.name,
-    image: 'Dori.webp'
+    image: 'Dori.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Child,
+    weapon: Weapons.Claymore,
+    region: Regions.Sumeru
   },
   {
     name: 'Eula',
     vision: Elements.Cryo.name,
-    image: 'Eula.webp'
+    image: 'Eula.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Claymore,
+    region: Regions.Mondstadt
   },
   {
     name: 'Faruzan',
     vision: Elements.Anemo.name,
-    image: 'Faruzan.webp'
+    image: 'Faruzan.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Bow,
+    region: Regions.Sumeru
   },
   {
     name: 'Fischl',
     vision: Elements.Electro.name,
-    image: 'Fischl.webp'
+    image: 'Fischl.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Bow,
+    region: Regions.Mondstadt
   },
   {
     name: 'Ganyu',
     vision: Elements.Cryo.name,
-    image: 'Ganyu.webp'
+    image: 'Ganyu.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Bow,
+    region: Regions.Liyue
   },
   {
     name: 'Gorou',
     vision: Elements.Geo.name,
-    image: 'Gorou.webp'
+    image: 'Gorou.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Bow,
+    region: Regions.Inazuma
   },
   {
     name: 'Hu Tao',
     vision: Elements.Pyro.name,
-    image: 'Hu Tao.webp'
+    image: 'Hu Tao.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Polearm,
+    region: Regions.Liyue
   },
   {
     name: 'Jean',
     vision: Elements.Anemo.name,
-    image: 'Jean.webp'
+    image: 'Jean.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Sword,
+    region: Regions.Mondstadt
   },
   {
     name: 'Kaedahara Kazuha',
     vision: Elements.Anemo.name,
-    image: 'Kaedahara Kazuha.webp'
+    image: 'Kaedahara Kazuha.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Sword,
+    region: Regions.Liyue
   },
   {
     name: 'Kaeya',
     vision: Elements.Cryo.name,
-    image: 'Kaeya.webp'
+    image: 'Kaeya.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Sword,
+    region: Regions.Mondstadt
   },
   {
     name: 'Kamisato Ayaka',
     vision: Elements.Cryo.name,
-    image: 'Kamisato Ayaka.webp'
+    image: 'Kamisato Ayaka.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Sword,
+    region: Regions.Inazuma
   },
   {
     name: 'Kamisato Ayato',
     vision: Elements.Hydro.name,
-    image: 'Kamisato Ayato.webp'
+    image: 'Kamisato Ayato.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Sword,
+    region: Regions.Inazuma
   },
   {
     name: 'Keqing',
     vision: Elements.Electro.name,
-    image: 'Keqing.webp'
+    image: 'Keqing.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Sword,
+    region: Regions.Liyue
   },
   {
     name: 'Klee',
     vision: Elements.Pyro.name,
-    image: 'Klee.webp'
+    image: 'Klee.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Child,
+    weapon: Weapons.Catalyst,
+    region: Regions.Mondstadt
   },
   {
     name: 'Kujou Sara',
     vision: Elements.Electro.name,
-    image: 'Kujou Sara.webp'
+    image: 'Kujou Sara.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Bow,
+    region: Regions.Inazuma
   },
   {
     name: 'Kuki Shinobu',
     vision: Elements.Electro.name,
-    image: 'Kuki Shinobu.webp'
+    image: 'Kuki Shinobu.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Sword,
+    region: Regions.Inazuma
   },
   {
     name: 'Layla',
     vision: Elements.Cryo.name,
-    image: 'Layla.webp'
+    image: 'Layla.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Sword,
+    region: Regions.Sumeru
   },
   {
     name: 'Lisa',
     vision: Elements.Electro.name,
-    image: 'Lisa.webp'
+    image: 'Lisa.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Catalyst,
+    region: Regions.Mondstadt
   },
   {
     name: 'Mona',
     vision: Elements.Hydro.name,
-    image: 'Mona.webp'
+    image: 'Mona.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Catalyst,
+    region: Regions.Mondstadt
   },
   {
     name: 'Nahida',
     vision: Elements.Dendro.name,
-    image: 'Nahida.webp'
+    image: 'Nahida.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Child,
+    weapon: Weapons.Catalyst,
+    region: Regions.Sumeru
   },
   {
     name: 'Nilou',
     vision: Elements.Hydro.name,
-    image: 'Nilou.webp'
+    image: 'Nilou.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Sword,
+    region: Regions.Sumeru
   },
   {
     name: 'Ningguang',
     vision: Elements.Geo.name,
-    image: 'Ningguang.webp'
+    image: 'Ningguang.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Catalyst,
+    region: Regions.Liyue
   },
   {
     name: 'Noelle',
     vision: Elements.Geo.name,
-    image: 'Noelle.webp'
+    image: 'Noelle.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Claymore,
+    region: Regions.Mondstadt
   },
   {
     name: 'Qiqi',
     vision: Elements.Cryo.name,
-    image: 'Qiqi.webp'
+    image: 'Qiqi.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Child,
+    weapon: Weapons.Sword,
+    region: Regions.Liyue
   },
   {
     name: 'Raiden Shogun',
     vision: Elements.Electro.name,
-    image: 'Raiden Shogun.webp'
+    image: 'Raiden Shogun.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Polearm,
+    region: Regions.Inazuma
   },
   {
     name: 'Razor',
     vision: Elements.Electro.name,
-    image: 'Razor.webp'
+    image: 'Razor.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Claymore,
+    region: Regions.Mondstadt
   },
   {
     name: 'Rosaria',
     vision: Elements.Cryo.name,
-    image: 'Rosaria.webp'
+    image: 'Rosaria.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Polearm,
+    region: Regions.Mondstadt
   },
   {
     name: 'Sangonomiya Kokomi',
     vision: Elements.Hydro.name,
-    image: 'Sangonomiya Kokomi.webp'
+    image: 'Sangonomiya Kokomi.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Catalyst,
+    region: Regions.Inazuma
   },
   {
     name: 'Sayu',
     vision: Elements.Anemo.name,
-    image: 'Sayu.webp'
+    image: 'Sayu.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Child,
+    weapon: Weapons.Claymore,
+    region: Regions.Inazuma
   },
   {
     name: 'Shenhe',
     vision: Elements.Cryo.name,
-    image: 'Shenhe.webp'
+    image: 'Shenhe.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Polearm,
+    region: Regions.Liyue
   },
   {
     name: 'Shikanoin Heizou',
     vision: Elements.Anemo.name,
-    image: 'Shikanoin Heizou.webp'
+    image: 'Shikanoin Heizou.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Catalyst,
+    region: Regions.Inazuma
   },
   {
     name: 'Sucrose',
     vision: Elements.Anemo.name,
-    image: 'Sucrose.webp'
+    image: 'Sucrose.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Catalyst,
+    region: Regions.Mondstadt
   },
   {
     name: 'Tartaglia/Childe',
     vision: Elements.Hydro.name,
-    image: 'Tartaglia.webp'
+    image: 'Tartaglia.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Bow,
+    region: Regions.Liyue
   },
   {
     name: 'Thoma',
     vision: Elements.Pyro.name,
-    image: 'Thoma.webp'
+    image: 'Thoma.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Polearm,
+    region: Regions.Inazuma
   },
   {
     name: 'Tighnari',
     vision: Elements.Dendro.name,
-    image: 'Tighnari.webp'
+    image: 'Tighnari.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Bow,
+    region: Regions.Sumeru
   },
   {
     name: 'Traveler/Aether/Lumine',
     vision: Elements.Unaligned.name,
-    image: 'Traveler.webp'
+    image: 'Traveler.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Any,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Sword,
+    region: Regions.None
   },
   {
     name: 'Venti',
     vision: Elements.Anemo.name,
-    image: 'Venti.webp'
+    image: 'Venti.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Bow,
+    region: Regions.Mondstadt
   },
   {
     name: 'Wanderer',
     vision: Elements.Anemo.name,
-    image: 'Wanderer.webp'
+    image: 'Wanderer.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Catalyst,
+    region: Regions.Sumeru
   },
   {
     name: 'Xiangling',
     vision: Elements.Pyro.name,
-    image: 'Xiangling.webp'
+    image: 'Xiangling.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Polearm,
+    region: Regions.Liyue
   },
   {
     name: 'Xiao',
     vision: Elements.Anemo.name,
-    image: 'Xiao.webp'
+    image: 'Xiao.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Polearm,
+    region: Regions.Liyue
   },
   {
     name: 'Xingqiu',
     vision: Elements.Hydro.name,
-    image: 'Xingqiu.webp'
+    image: 'Xingqiu.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Sword,
+    region: Regions.Liyue
   },
   {
     name: 'Xinyan',
     vision: Elements.Pyro.name,
-    image: 'Xinyan.webp'
+    image: 'Xinyan.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Claymore,
+    region: Regions.Liyue
   },
   {
     name: 'Yae Miko',
     vision: Elements.Electro.name,
-    image: 'Yae Miko.webp'
+    image: 'Yae Miko.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Catalyst,
+    region: Regions.Inazuma
   },
   {
     name: 'Yanfei',
     vision: Elements.Pyro.name,
-    image: 'Yanfei.webp'
+    image: 'Yanfei.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Catalyst,
+    region: Regions.Liyue
   },
   {
     name: 'Yaoyao',
     vision: Elements.Dendro.name,
-    image: 'Yaoyao.webp'
+    image: 'Yaoyao.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Child,
+    weapon: Weapons.Polearm,
+    region: Regions.Liyue
   },
   {
     name: 'Yelan',
     vision: Elements.Hydro.name,
-    image: 'Yelan.webp'
+    image: 'Yelan.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Bow,
+    region: Regions.Liyue
   },
   {
     name: 'Yoimiya',
     vision: Elements.Pyro.name,
-    image: 'Yoimiya.webp'
+    image: 'Yoimiya.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Bow,
+    region: Regions.Inazuma
   },
   {
     name: 'Yun Jin',
     vision: Elements.Geo.name,
-    image: 'Yun Jin.webp'
+    image: 'Yun Jin.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Polearm,
+    region: Regions.Liyue
   },
   {
     name: 'Zhongli',
     vision: Elements.Geo.name,
-    image: 'Zhongli.webp'
+    image: 'Zhongli.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Polearm,
+    region: Regions.Liyue
   }
 ]
 
 export const NoPick: Character = {
   name: 'No Pick',
   vision: Elements.Unaligned.name,
-  image: 'zz.webp'
+  image: 'zz.webp',
 }
 
 let modifiedCharacters = [...Characters]

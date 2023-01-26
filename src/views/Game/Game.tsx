@@ -1,11 +1,11 @@
 import Button from "@/components/Button/Button"
 import Input from "@/components/Input/Input"
-import useImagePreloader, { Character, imageList, characterExists, Elements, filterCharacters, getPanels, NoPick, removeCharacter } from "@/data/data"
+import useImagePreloader, { Characters, Character, imageList, characterExists, Elements, filterCharacters, getPanels, NoPick, removeCharacter } from "@/data/data"
 import Dialog from "@/components/Dialog/Dialog"
 import { useContext, useEffect, useRef, useState } from "react"
 import { useSearchParams, useNavigate } from "react-router-dom"
 import socket from "@/socket/socket"
-import { ssGetUser, ssGetSelection } from "@/storage/session"
+import { ssGetUser, ssGetSelection, ssGetAutoban } from "@/storage/session"
 import { User } from "@/types/storage"
 import { Transition } from "@headlessui/react"
 import NotificationContext from '../../context/NotifcationContext'
@@ -71,9 +71,24 @@ const Game = () => {
   const [showPlayerPanel1, setShowPlayerPanel1] = useState(false)
   const [showPlayerPanel2, setShowPlayerPanel2] = useState(false)
   const selection = useRef<Selections[]>(ssGetSelection())
+  const autoban = useRef<any>(ssGetAutoban())
   const selected = useRef(false)
 
   useEffect(() => {
+    if (autoban.current.type !== 'None') {
+      const autobannedCharacters = Characters.filter((character: Character) => {
+        return (
+          character.sex === autoban.current.value ||
+          character.rarity === autoban.current.value ||
+          character.bodyType === autoban.current.value ||
+          character.weapon === autoban.current.value ||
+          character.region === autoban.current.value
+        )
+      })
+      autobannedCharacters.forEach((character: Character) => removeCharacter(character.name))
+      setPanels(getPanels())
+    }
+
     let draftStartInterval: ReturnType<typeof setTimeout>
     socket.on('draftStart', () => {
       setDraftStart(true)
@@ -317,18 +332,6 @@ const Game = () => {
     socket.emit('chat', newChat)
   }
 
-  function setBackgroundColor(character: Character) {
-    const bgOpacity = 'bg-opacity-50'
-    if (character?.vision === 'Anemo') return 'bg-green-300 ' + bgOpacity
-    if (character?.vision === 'Geo') return 'bg-yellow-600 ' + bgOpacity
-    if (character?.vision === 'Electro') return 'bg-purple-600 ' + bgOpacity
-    if (character?.vision === 'Dendro') return 'bg-green-800 ' + bgOpacity
-    if (character?.vision === 'Hydro') return 'bg-blue-700 ' + bgOpacity
-    if (character?.vision === 'Pyro') return 'bg-red-400 ' + bgOpacity
-    if (character?.vision === 'Cryo') return 'bg-blue-200 ' + bgOpacity
-    if (character?.vision === 'Unaligned') return 'bg-gray-800 ' + bgOpacity
-  }
-
   function getCharacterBorder(character: Character) {
     let border = 'border-gray-700'
     if (character?.vision === 'Anemo') border = 'border-green-300'
@@ -526,7 +529,7 @@ const Game = () => {
               <div>
                 {[...selection.current[0]?.selection.picks.characters].map((character: Character, index) => {
                   return (
-                    <div key={index} className={`${noOfSelection < 4 ? 'h-40' : 'h-32'} ${user.isHost ? 'sm:w-48 md:w-72 lg:w-96' : 'sm:w-32 md:w-56 lg:w-80'} border-4 border-yellow-600 rounded-md bg-gray-800 bg-opacity-70 last:mr-0 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
+                    <div key={index} className={`${noOfSelection < 4 ? 'h-40' : 'h-32'} ${user.isHost ? 'sm:w-48 md:w-72 lg:w-96' : 'sm:w-32 md:w-56 lg:w-80'} border-4 border-yellow-600 rounded-md bg-gray-800 bg-opacity-70 last:mr-0 overflow-hidden`}>
                       {
                         character?.image && (
                         <Transition
@@ -625,7 +628,7 @@ const Game = () => {
               <div>
                 {[...selection.current[1]?.selection.picks.characters].map((character: Character, index) => {
                   return (
-                    <div key={index} className={`${noOfSelection < 4 ? 'h-40' : 'h-32'} ${user.isHost ? 'sm:w-48 md:w-72 lg:w-96' : 'sm:w-32 md:w-56 lg:w-80'} border-4 border-yellow-600 rounded-md bg-gray-800 bg-opacity-70 last:mr-0 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
+                    <div key={index} className={`${noOfSelection < 4 ? 'h-40' : 'h-32'} ${user.isHost ? 'sm:w-48 md:w-72 lg:w-96' : 'sm:w-32 md:w-56 lg:w-80'} border-4 border-yellow-600 rounded-md bg-gray-800 bg-opacity-70 last:mr-0 overflow-hidden`}>
                       {
                         character?.image && (
                         <Transition
@@ -653,7 +656,7 @@ const Game = () => {
           <div className="flex justify-center">
             {[...selection.current[0]?.selection.bans.characters].map((character: Character, index) => {
               return (
-                <div key={index} className={`relative sm:h-16 md:h-16 lg:h-20 sm:w-24 md:w-28 lg:w-32 border-4 border-red-400 rounded-md bg-gray-800 bg-opacity-70 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
+                <div key={index} className="relative sm:h-16 md:h-16 lg:h-20 sm:w-24 md:w-28 lg:w-32 border-4 border-red-400 rounded-md bg-gray-800 bg-opacity-70 overflow-hidden">
                   {
                     character?.image && (
                     <Transition
@@ -687,7 +690,7 @@ const Game = () => {
           <div className="flex flex-row-reverse justify-center">
             {[...selection.current[1]?.selection.bans.characters].map((character: Character, index) => {
               return (
-                <div key={index} className={`relative sm:h-16 md:h-16 lg:h-20 sm:w-24 md:w-28 lg:w-32 border-4 border-red-400 rounded-md bg-gray-800 bg-opacity-70 overflow-hidden ${setBackgroundColor(character)} ${character?.forSelection ? 'animate-pulse' : ''}`}>
+                <div key={index} className="relative sm:h-16 md:h-16 lg:h-20 sm:w-24 md:w-28 lg:w-32 border-4 border-red-400 rounded-md bg-gray-800 bg-opacity-70 overflow-hidden">
                   {
                     character?.image && (
                     <Transition
