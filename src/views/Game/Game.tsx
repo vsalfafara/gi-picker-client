@@ -1,6 +1,6 @@
 import Button from "@/components/Button/Button"
 import Input from "@/components/Input/Input"
-import useImagePreloader, { Characters, Character, imageList, characterExists, Elements, filterCharacters, getPanels, NoPick, removeCharacter } from "@/data/data"
+import useImagePreloader, { Characters, Character, imageList, characterExists, Elements, filterCharacters, getPanels, NoPick, removeCharacter, Autoban } from "@/data/data"
 import Dialog from "@/components/Dialog/Dialog"
 import { useContext, useEffect, useRef, useState } from "react"
 import { useSearchParams, useNavigate } from "react-router-dom"
@@ -75,16 +75,19 @@ const Game = () => {
   const selected = useRef(false)
 
   useEffect(() => {
-    if (autoban.current.type !== 'None') {
+    if (autoban.current.length) {
+      const bans = JSON.parse(autoban.current).map((ban: Autoban) => ban.value.toLowerCase())
       const autobannedCharacters = Characters.filter((character: Character) => {
         return (
-          character.sex === autoban.current.value ||
-          character.rarity === autoban.current.value ||
-          character.bodyType === autoban.current.value ||
-          character.weapon === autoban.current.value ||
-          character.region === autoban.current.value
+          bans.includes(character.sex?.toLowerCase()) ||
+          bans.includes(character.rarity?.toLowerCase()) ||
+          bans.includes(character.bodyType?.toLowerCase()) ||
+          bans.includes(character.weapon?.toLowerCase()) ||
+          bans.includes(character.region?.toLowerCase()) ||
+          bans.includes(character.vision?.toLowerCase())
         )
       })
+      console.log(autobannedCharacters)
       autobannedCharacters.forEach((character: Character) => removeCharacter(character.name))
       setPanels(getPanels())
     }

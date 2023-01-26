@@ -48,7 +48,7 @@ export const ssGetAutoban = () => {
   const autoban = sessionStorage.getItem('autoban')
   if (autoban) {
     const decryptedAutoban = CryptoJS.AES.decrypt(autoban, key)
-    return JSON.parse(decryptedAutoban.toString(CryptoJS.enc.Utf8))
+    return decryptedAutoban.toString(CryptoJS.enc.Utf8)
   }
   return false
 }

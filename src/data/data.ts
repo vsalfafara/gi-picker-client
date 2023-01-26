@@ -41,21 +41,6 @@ export const Regions = {
   None: 'None'
 }
 
-export type Character = {
-  name: string
-  vision: string
-  image: string | null
-  rarity?: string
-  sex?: string
-  bodyType?: string
-  weapon?: string
-  region?: string
-}
-
-type Panel = {
-  [key: keyof typeof Elements]: Character[]
-}
-
 export const Elements: Element = {
   Anemo: {
     name: 'Anemo',
@@ -89,6 +74,21 @@ export const Elements: Element = {
     name: 'Unaligned',
     image: 'assets/Elements/Unaligned.webp'
   }
+}
+
+export type Character = {
+  name: string
+  vision: string
+  image: string | null
+  rarity?: string
+  sex?: string
+  bodyType?: string
+  weapon?: string
+  region?: string
+}
+
+type Panel = {
+  [key: keyof typeof Elements]: Character[]
 }
 
 export const Characters: Character[] = [
@@ -828,3 +828,103 @@ export default function useImagePreloader(imageList: string[]) {
 
   return { imagesPreloaded }
 }
+
+export type Autoban = {
+  readonly value: string,
+  readonly label: string
+}
+
+export const AutobanOptions: Autoban[] = [
+  {
+    value: Elements.Anemo.name,
+    label: 'Anemo Characters'
+  },
+  {
+    value: Elements.Geo.name,
+    label: 'Geo Characters'
+  },
+  {
+    value: Elements.Electro.name,
+    label: 'Electro Characters'
+  },
+  {
+    value: Elements.Dendro.name,
+    label: 'Dendro Characters'
+  },
+  {
+    value: Elements.Hydro.name,
+    label: 'Hydro Characters'
+  },
+  {
+    value: Elements.Pyro.name,
+    label: 'Pyro Characters'
+  },
+  {
+    value: Elements.Cryo.name,
+    label: 'Cryo Characters'
+  },
+  {
+    value: Sexes.Male,
+    label: 'Male Characters'
+  },
+  {
+    value: Sexes.Female,
+    label: 'Female Characters'
+  },
+  {
+    value: Rarities.Rare,
+    label: '4-Star Characters'
+  },
+  {
+    value: Rarities.VeryRare,
+    label: '5-Star Characters'
+  },
+  {
+    value: BodyTypes.Child,
+    label: 'Body Type: Child'
+  },
+  {
+    value: BodyTypes.Teenager,
+    label: 'Body Type: Teenager'
+  },
+  {
+    value: BodyTypes.Adult,
+    label: 'Body Type: Adult'
+  },
+  {
+    value: Weapons.Sword,
+    label: 'Sword Users'
+  },
+  {
+    value: Weapons.Claymore,
+    label: 'Claymore Users'
+  },
+  {
+    value: Weapons.Polearm,
+    label: 'Polearm Users'
+  },
+  {
+    value: Weapons.Bow,
+    label: 'Bow Users'
+  },
+  {
+    value: Weapons.Catalyst,
+    label: 'Catalyst Users'
+  },
+  {
+    value: Regions.Mondstadt,
+    label: 'Mondstadt Characters'
+  },
+  {
+    value: Regions.Liyue,
+    label: 'Liyue Characters'
+  },
+  {
+    value: Regions.Inazuma,
+    label: 'Inazuma Characters'
+  },
+  {
+    value: Regions.Sumeru,
+    label: 'Sumeru Characters'
+  }
+]

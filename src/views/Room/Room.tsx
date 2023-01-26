@@ -8,8 +8,10 @@ import FormItem from '../../components/FormItem/FormItem'
 import Radio from '../../components/Input/Radio'
 import NotificationContext from '../../context/NotifcationContext'
 import socket from  '../../socket/socket'
+import { AutobanOptions } from "@/data/data"
 import { ssGetUser, ssSetAutoban, ssSetSelection } from '../../storage/session'
 import { User } from '../../types/storage'
+import Select from 'react-select'
 
 const Room = () => {
   const navigate = useNavigate();
@@ -23,94 +25,7 @@ const Room = () => {
   const [firstPick, setFirstPick] = useState<string>()
   const { roomId } = useParams()
   const [user, _] = useState(ssGetUser())
-  const autobans = useRef([
-    {
-      type: 'None',
-      value: null,
-      display: 'None'
-    },
-    {
-      type: 'Sexes',
-      value: 'Male',
-      display: 'Male Characters'
-    },
-    {
-      type: 'Sexes',
-      value: 'Female',
-      display: 'Female Characters'
-    },
-    {
-      type: 'Rarities',
-      value: 'Rare',
-      display: '4-Star Characters'
-    },
-    {
-      type: 'Rarities',
-      value: 'VeryRare',
-      display: '5-Star Characters'
-    },
-    {
-      type: 'BodyTypes',
-      value: 'Child',
-      display: 'Body Type: Child'
-    },
-    {
-      type: 'BodyTypes',
-      value: 'Teenager',
-      display: 'Body Type: Teenager'
-    },
-    {
-      type: 'BodyTypes',
-      value: 'Adult',
-      display: 'Body Type: Adult'
-    },
-    {
-      type: 'Weapons',
-      value: 'Sword',
-      display: 'Sword Users'
-    },
-    {
-      type: 'Weapons',
-      value: 'Claymore',
-      display: 'Claymore Users'
-    },
-    {
-      type: 'Weapons',
-      value: 'Polearm',
-      display: 'Polearm Users'
-    },
-    {
-      type: 'Weapons',
-      value: 'Bow',
-      display: 'Bow Users'
-    },
-    {
-      type: 'Weapons',
-      value: 'Catalyst',
-      display: 'Catalyst Users'
-    },
-    {
-      type: 'Regions',
-      value: 'Mondstadt',
-      display: 'Mondstadt Characters'
-    },
-    {
-      type: 'Regions',
-      value: 'Liyue',
-      display: 'Liyue Characters'
-    },
-    {
-      type: 'Regions',
-      value: 'Inazuma',
-      display: 'Inazuma Characters'
-    },
-    {
-      type: 'Regions',
-      value: 'Sumeru',
-      display: 'Sumeru Characters'
-    },
-  ])
-  const [autoban, setAutoban] = useState<any>(JSON.stringify(autobans.current[0]))
+  const [autoban, setAutoban] = useState<any[]>()
 
   useEffect(() => {
     if (user) {
@@ -197,9 +112,13 @@ const Room = () => {
       time,
       firstPick: Number(firstPick),
       roomId,
-      autoban: JSON.parse(autoban)
+      autoban: autoban
     }
     socket.emit('startGame', form)
+  }
+
+  function handleChangeAutoban(e: any) {
+    setAutoban(e)
   }
 
   return (
@@ -228,15 +147,7 @@ const Room = () => {
               </FormItem>
             }
             <FormItem label="Auto Bans" labelPosition='left' labelWidth="w-[7rem]">
-              <select defaultValue={JSON.stringify(autobans.current[0])} onChange={(e) => setAutoban(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 bg-gray-200 border-gray-600 placeholder-gray-600 focus:ring-blue-500 focus:border-blue-500">
-                {
-                  autobans.current.map((autoban: any, index: number) => {
-                    return (
-                      <option key={index} value={JSON.stringify(autoban)}>{autoban.display}</option>
-                    )
-                  })
-                }
-              </select>
+              <Select isMulti closeMenuOnSelect={false} options={AutobanOptions} onChange={handleChangeAutoban} className="w-full" />
             </FormItem>
             <FormItem label="With Timer" labelPosition='left' labelWidth="w-[7rem]">
               <div className='flex'>
