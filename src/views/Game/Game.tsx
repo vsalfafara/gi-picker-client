@@ -42,7 +42,7 @@ const Game = () => {
   const navigate = useNavigate()
   const {notificationHandler} = useContext(NotificationContext)
   const [params] = useSearchParams()
-  const noOfSelection = Number(params.get('mode')?.charAt(0))
+  const gameType = params.get('gameType')
   const withTimer = params.get('withTimer')
   const [turn, setTurn] = useState<Turn>()
   const [showTurn, setShowTurn] = useState(false)
@@ -87,7 +87,6 @@ const Game = () => {
           bans.includes(character.vision?.toLowerCase())
         )
       })
-      console.log(autobannedCharacters)
       autobannedCharacters.forEach((character: Character) => removeCharacter(character.name))
       setPanels(getPanels())
     }
@@ -348,11 +347,11 @@ const Game = () => {
   }
 
   return (
-    <div className="h-screen max-w-screen-2xl flex flex-col justify-center m-auto">
+    <div className="h-full max-w-screen-2xl flex flex-col justify-center m-auto">
       {
         showVSScreen &&
         (
-        <div className="flex flex-col items-center text-white h-[684px] relative">
+        <div className="flex flex-col items-center justify-center text-white h-[684px] relative">
           {
             user.isHost && 
             (
@@ -371,11 +370,11 @@ const Game = () => {
             <div className="flex my-2">
             { 
               [...selection.current[0]?.selection.picks.characters].map((character: Character, index: number) => {
-                return (
-                  <div key={index} className={`bg-gray-800 bg-opacity-70 h-64 w-44 mx-2 border-4 overflow-hidden rounded-xl ${getCharacterBorder(character)}`}>
+                return character.name !== 'No Pick' ? (
+                  <div key={index} className={`bg-gray-800 bg-opacity-70 ${gameType === 'std' ? 'h-64 w-44' : 'h-44 w-24'} mx-2 border-4 overflow-hidden rounded-xl ${getCharacterBorder(character)}`}>
                     <img src={`assets/Characters/VS/${character?.image}`} className="object-cover object-center h-full w-full" />
                   </div>
-                )
+                ) : null
               })
             }
             </div>
@@ -397,11 +396,11 @@ const Game = () => {
               <div className="flex my-2">
               { 
                 [...selection.current[1]?.selection.picks.characters].map((character: Character, index: number) => {
-                  return (
-                    <div key={index} className={`bg-gray-800 bg-opacity-70 h-64 w-44 mx-2 border-4 overflow-hidden rounded-xl ${getCharacterBorder(character)}`}>
+                  return character.name !== 'No Pick' ? (
+                    <div key={index} className={`bg-gray-800 bg-opacity-70 ${gameType === 'std' ? 'h-64 w-44' : 'h-44 w-24'} mx-2 border-4 overflow-hidden rounded-xl ${getCharacterBorder(character)}`}>
                       <img src={`assets/Characters/VS/${character?.image}`} className="object-cover object-center h-full w-full" />
                     </div>
-                  )
+                  ) : null
                 })
               }
               </div>
@@ -517,38 +516,24 @@ const Game = () => {
               <Button size="sm" type="warning" onClick={goBack}>Go Back to Room</Button>
             </>
           )}
-          <Button size="sm" type="danger" onClick={openHelp}>Help</Button>
           <Button size="sm" type="success" onClick={openChat}>
             { newMessage && <span className="absolute -top-2 -right-2 h-4 w-4 bg-red-500 rounded-full" />}
             Chat
           </Button>
+          <Button size="sm" type="danger" onClick={openHelp}>Help</Button>
         </div>
         <div className="flex justify-between mb-4">
           <div className="flex">
             <div className="flex flex-col items-start">
-              <div className={`${user.isHost ? 'sm:w-48 md:w-72 lg:w-96' : 'sm:w-32 md:w-56 lg:w-80'} text-2xl font-bold text-center text-white bg-yellow-600`}>
+              <div className="sm:w-48 md:w-72 lg:w-96 text-2xl font-bold text-center text-white bg-yellow-600">
                 <p>{selection.current[0]?.player.name} {user.id === selection.current[0]?.player.id ? '(You)' : ''}</p>
               </div>
-              <div>
-                {[...selection.current[0]?.selection.picks.characters].map((character: Character, index) => {
+              <div className="flex flex-wrap sm:w-48 md:w-72 lg:w-96">
+                {[...selection.current[0]?.selection.picks.characters].map((character: Character, index: number) => {
                   return (
-                    <div key={index} className={`${noOfSelection < 4 ? 'h-40' : 'h-32'} ${user.isHost ? 'sm:w-48 md:w-72 lg:w-96' : 'sm:w-32 md:w-56 lg:w-80'} border-4 border-yellow-600 rounded-md bg-gray-800 bg-opacity-70 last:mr-0 overflow-hidden`}>
+                    <div key={index} className={`${gameType === 'std' ? 'h-40 w-full' : 'h-32 w-1/2'} border-4 border-yellow-600 rounded-md bg-gray-800 bg-opacity-70 last:mr-0 overflow-hidden`}>
                       {
-                        character?.image && (
-                        <Transition
-                          appear={true}
-                          show={!!character}
-                          enter="transition-opacity duration-300"
-                          enterFrom="opacity-0"
-                          enterTo="opacity-100"
-                          leave="transition-opacity duration-300"
-                          leaveFrom="opacity-100"
-                          leaveTo="opacity-0"
-                          className={`${noOfSelection < 4 ? 'h-40' : 'h-32'} ${user.isHost ? 'sm:w-48 md:w-72 lg:w-96' : 'sm:w-32 md:w-56 lg:w-80'}`}
-                        >
-                          <img src={`assets/Characters/Admin Panel/${character?.image}`} alt="" className="object-cover object-center h-full w-full" />
-                        </Transition>
-                        )
+                        character && <img src={`assets/Characters/Admin Panel/${character?.image}`} alt="" className="object-cover object-center h-full w-full" />
                       }
                     </div>
                   )
@@ -566,8 +551,8 @@ const Game = () => {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <div className="h-[500px] w-[600px] flex justify-center items-center">
-                <img src={`assets/Characters/Splash/${splash?.image}`} alt="" />
+              <div className="h-96 w-full flex justify-center items-center">
+                <img src={`assets/Characters/Splash/${splash?.image}`} className="h-auto w-full" alt="" />
               </div>
             </Transition>
             <Transition
@@ -625,28 +610,15 @@ const Game = () => {
           </div>
           <div className="flex">
             <div className="flex flex-col items-end">
-              <div className={`${user.isHost ? 'sm:w-48 md:w-72 lg:w-96' : 'sm:w-32 md:w-56 lg:w-80'} text-2xl font-bold text-center text-white bg-yellow-600`}>
+              <div className="sm:w-48 md:w-72 lg:w-96 text-2xl font-bold text-center text-white bg-yellow-600">
                 <p>{selection.current[1]?.player.name} {user.id === selection.current[1]?.player.id ? '(You)' : ''}</p>
               </div>
-              <div>
+              <div className="flex flex-wrap sm:w-48 md:w-72 lg:w-96">
                 {[...selection.current[1]?.selection.picks.characters].map((character: Character, index) => {
                   return (
-                    <div key={index} className={`${noOfSelection < 4 ? 'h-40' : 'h-32'} ${user.isHost ? 'sm:w-48 md:w-72 lg:w-96' : 'sm:w-32 md:w-56 lg:w-80'} border-4 border-yellow-600 rounded-md bg-gray-800 bg-opacity-70 last:mr-0 overflow-hidden`}>
+                    <div key={index} className={`${gameType === 'std' ? 'h-40 w-full' : 'h-32 w-1/2'} border-4 border-yellow-600 rounded-md bg-gray-800 bg-opacity-70 last:mr-0 overflow-hidden`}>
                       {
-                        character?.image && (
-                        <Transition
-                          show={!!character}
-                          enter="transition-opacity duration-300"
-                          enterFrom="opacity-0"
-                          enterTo="opacity-100"
-                          leave="transition-opacity duration-300"
-                          leaveFrom="opacity-100"
-                          leaveTo="opacity-0"
-                          className={`${noOfSelection < 4 ? 'h-40' : 'h-32'} ${user.isHost ? 'sm:w-48 md:w-72 lg:w-96' : 'sm:w-32 md:w-56 lg:w-80'}`}
-                        >
-                          <img src={`assets/Characters/Admin Panel/${character?.image}`} alt="" className="object-cover object-center h-full w-full" />
-                        </Transition>
-                        )
+                        character && <img src={`assets/Characters/Admin Panel/${character?.image}`} alt="" className="object-cover object-center h-full w-full" />
                       }
                     </div>
                   )

@@ -18,7 +18,7 @@ const Room = () => {
   const {notificationHandler} = useContext(NotificationContext)
   const [showDialog, setShowDialog] = useState(false)
   const [gameType, setGameType] = useState<string>()
-  const [mode, setMode] = useState<string>()
+  const [mode, setMode] = useState<number>()
   const [withTimer, setWithTimer] = useState<string>()
   const [time, setTime] = useState<number>()
   const [players, setPlayers] = useState<User[]>([])
@@ -42,27 +42,35 @@ const Room = () => {
   useEffect(() => {
     socket.on('getAllPlayersInRoom', (users: User[]) => setPlayers(users))
     resetCharacters()
-    socket.on('startGame', ({ autoban, mode, withTimer, game }) => {
-    const noOfSelections = Number(mode.charAt(0))
-
-    const selectionArr = game.players.map((player: User) => {
-      return {
-        player: player,
-        selection: {
-          bans: {
-            characters: new Array(noOfSelections),
-            pointer: 0
-          },
-          picks: {
-            characters: new Array(noOfSelections),
-            pointer: 0
-          }
-        },
+    socket.on('startGame', ({ autoban, gameType, mode, withTimer, game }) => {
+      let noOfPicks: number = 0
+      let noOfBans: number = 0
+      if (gameType === 'std' && !!mode) {
+        noOfPicks = mode
+        noOfBans = mode
+      } else if (gameType === 'abyss'){
+        noOfPicks = 8
+        noOfBans = 3
       }
-    })
-    ssSetSelection(selectionArr)
-    ssSetAutoban(autoban)
-      navigate(`/game?mode=${mode}&withTimer=${withTimer}`)
+
+      const selectionArr = game.players.map((player: User) => {
+        return {
+          player: player,
+          selection: {
+            picks: {
+              characters: Array(Number(noOfPicks)),
+              pointer: 0
+            },
+            bans: {
+              characters: Array(Number(noOfBans)),
+              pointer: 0
+            }
+          },
+        }
+      })
+      ssSetSelection(selectionArr)
+      ssSetAutoban(autoban)
+      navigate(`/game?gameType=${gameType}&withTimer=${withTimer}${mode ? `&mode=${mode}` : ''}`)
     })
     return () => {
       socket.off('getAllPlayersInRoom');
@@ -131,20 +139,22 @@ const Room = () => {
             <FormItem label="Game Type" labelPosition='left' labelWidth="w-[7rem]">
               <div className='flex'>
                 <Radio name='type' id='std' label='Standard' value='std' onChange={(value: string) => setGameType(value)} />
-                <Radio name='type' id='abyss' label='Abyss Floor 12' value='abyss' onChange={(value: string) => setGameType(value)} disabled />
+                <Radio name='type' id='abyss' label='Abyss' value='abyss' onChange={(value: string) => setGameType(value)} />
               </div>
             </FormItem>
             {
               gameType === 'std'
               && 
-              <FormItem label="Mode" labelPosition='left' labelWidth="w-[7rem]">
-                <div className='flex'>
-                  <Radio name='mode' id='1v1' label='1v1' value='1v1' onChange={(value: string) => setMode(value)} />
-                  <Radio name='mode' id='2v2' label='2v2' value='2v2' onChange={(value: string) => setMode(value)} />
-                  <Radio name='mode' id='3v3' label='3v3' value='3v3' onChange={(value: string) => setMode(value)} />
-                  <Radio name='mode' id='4v4' label='4v4' value='4v4' onChange={(value: string) => setMode(value)} />
-                </div>
-              </FormItem>
+              (
+                <FormItem label="Mode" labelPosition='left' labelWidth="w-[7rem]">
+                  <div className='flex'>
+                    <Radio name='mode' id='1v1' label='1v1' value='1' onChange={(value: number) => setMode(value)} />
+                    <Radio name='mode' id='2v2' label='2v2' value='2' onChange={(value: number) => setMode(value)} />
+                    <Radio name='mode' id='3v3' label='3v3' value='3' onChange={(value: number) => setMode(value)} />
+                    <Radio name='mode' id='4v4' label='4v4' value='4' onChange={(value: number) => setMode(value)} />
+                  </div>
+                </FormItem>
+              )
             }
             <FormItem label="Auto Bans" labelPosition='left' labelWidth="w-[7rem]">
               <Select isMulti closeMenuOnSelect={false} options={AutobanOptions} onChange={handleChangeAutoban} className="w-full" />
@@ -158,14 +168,16 @@ const Room = () => {
             {
               withTimer === 'Yes'
               &&
-              <FormItem label="Timer (Seconds)" labelPosition='left' labelWidth="w-[7rem]">
-                <div className='flex'>
-                  <Radio name='timer' id='15' label='15' value={15} onChange={(value: number) => setTime(Number(value))} />
-                  <Radio name='timer' id='30' label='30' value={30} onChange={(value: number) => setTime(Number(value))} />
-                  <Radio name='timer' id='45' label='45' value={45} onChange={(value: number) => setTime(Number(value))} />
-                  <Radio name='timer' id='60' label='60' value={60} onChange={(value: number) => setTime(Number(value))} />
-                </div>
-              </FormItem>
+              (
+                <FormItem label="Timer (Seconds)" labelPosition='left' labelWidth="w-[7rem]">
+                  <div className='flex'>
+                    <Radio name='timer' id='15' label='15' value={15} onChange={(value: number) => setTime(Number(value))} />
+                    <Radio name='timer' id='30' label='30' value={30} onChange={(value: number) => setTime(Number(value))} />
+                    <Radio name='timer' id='45' label='45' value={45} onChange={(value: number) => setTime(Number(value))} />
+                    <Radio name='timer' id='60' label='60' value={60} onChange={(value: number) => setTime(Number(value))} />
+                  </div>
+                </FormItem>
+              )
             }
             <FormItem label="First Pick" labelPosition='left' labelWidth="w-[7rem]">
               <div className="flex">
@@ -179,7 +191,7 @@ const Room = () => {
             <div className="flex justify-end">
               <Button type='text' onClick={() => openInfo()}>Help</Button>
               <Button type='primary' onClick={() => copyLink()}>Share Room Link</Button>
-              <Button type='success' disabled={players.length !== 2 || !(gameType && mode && firstPick && (withTimer !== 'Yes' || time))} onClick={() => startGame()}>Start Game</Button>
+              <Button type='success' disabled={players.length !== 2 || !(firstPick && (gameType !== 'std' || mode) && (withTimer !== 'Yes' || time))} onClick={() => startGame()}>Start Game</Button>
             </div>
           </Card>
         </div>
