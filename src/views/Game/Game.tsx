@@ -351,7 +351,7 @@ const Game = () => {
       {
         showVSScreen &&
         (
-        <div className="flex flex-col items-center justify-center text-white h-[684px] relative">
+        <div className="flex flex-col items-center justify-start text-white h-[684px] relative">
           {
             user.isHost && 
             (

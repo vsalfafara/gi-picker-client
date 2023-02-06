@@ -46,9 +46,8 @@ const Room = () => {
       let noOfPicks: number = 0
       let noOfBans: number = 0
       if (gameType === 'std' && !!mode) {
-        console.log(mode)
         noOfPicks = Number(mode)
-        noOfBans = Number(mode) + 1
+        noOfBans = Number(mode)
       } else if (gameType === 'abyss'){
         noOfPicks = 8
         noOfBans = 3
