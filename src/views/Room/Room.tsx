@@ -12,6 +12,7 @@ import { AutobanOptions } from "@/data/data"
 import { ssGetUser, ssSetAutoban, ssSetSelection } from '../../storage/session'
 import { User } from '../../types/storage'
 import Select from 'react-select'
+import Checkbox from '@/components/Input/Checkbox'
 
 const Room = () => {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ const Room = () => {
   const [mode, setMode] = useState<number>()
   const [withTimer, setWithTimer] = useState<string>()
   const [time, setTime] = useState<number>()
+  const [audience, setAudience] = useState<User[]>([])
   const [players, setPlayers] = useState<User[]>([])
   const [firstPick, setFirstPick] = useState<string>()
   const { roomId } = useParams()
@@ -40,7 +42,7 @@ const Room = () => {
   }, [])
   
   useEffect(() => {
-    socket.on('getAllPlayersInRoom', (users: User[]) => setPlayers(users))
+    socket.on('getAllPlayersInRoom', (users: User[]) => setAudience(users))
     resetCharacters()
     socket.on('startGame', ({ autoban, gameType, mode, withTimer, game }) => {
       let noOfPicks: number = 0
@@ -129,15 +131,32 @@ const Room = () => {
     setAutoban(e)
   }
 
+  function handleSetPlayers(userId: any) {
+    let newPlayers: any = [...players]
+    let playerExists = players.find((player: User) => player.id === userId)
+
+    if (!playerExists) {
+      const newPlayer = audience.find((user: User) => user.id === userId)
+      newPlayers.push(newPlayer)
+    }
+    if (playerExists) {
+      newPlayers = newPlayers.filter((player: User) => player.id !== userId)
+    }
+
+    setFirstPick(undefined)
+
+    setPlayers(newPlayers)
+  }
+
   return (
     <>
       <div className='h-full flex justify-center items-center'>
         {
           user.isHost ? 
           <div className="mr-2">
-          <Card title="Game Settings" className='w-[30rem]'>
+          <Card title="Game Settings" className='w-[40rem]'>
             <FormItem label="Game Type" labelPosition='left' labelWidth="w-[7rem]">
-              <div className='flex'>
+              <div className='flex flex-wrap w-full'>
                 <Radio name='type' id='std' label='Standard' value='std' onChange={(value: string) => setGameType(value)} />
                 <Radio name='type' id='abyss' label='Abyss' value='abyss' onChange={(value: string) => setGameType(value)} />
               </div>
@@ -147,7 +166,7 @@ const Room = () => {
               && 
               (
                 <FormItem label="Mode" labelPosition='left' labelWidth="w-[7rem]">
-                  <div className='flex'>
+                  <div className='flex flex-wrap w-full'>
                     <Radio name='mode' id='1v1' label='1v1' value='1' onChange={(value: number) => setMode(value)} />
                     <Radio name='mode' id='2v2' label='2v2' value='2' onChange={(value: number) => setMode(value)} />
                     <Radio name='mode' id='3v3' label='3v3' value='3' onChange={(value: number) => setMode(value)} />
@@ -160,7 +179,7 @@ const Room = () => {
               <Select isMulti closeMenuOnSelect={false} options={AutobanOptions} onChange={handleChangeAutoban} className="w-full" />
             </FormItem>
             <FormItem label="With Timer" labelPosition='left' labelWidth="w-[7rem]">
-              <div className='flex'>
+              <div className='flex flex-wrap w-full'>
                 <Radio name='with-timer' id='Yes' label='Yes' value='Yes' onChange={(value: string) => handleSetTime(value)} />
                 <Radio name='with-timer' id='No' label='No' value='No' onChange={(value: string) => handleSetTime(value)} />
               </div>
@@ -170,7 +189,7 @@ const Room = () => {
               &&
               (
                 <FormItem label="Timer (Seconds)" labelPosition='left' labelWidth="w-[7rem]">
-                  <div className='flex'>
+                  <div className='flex flex-wrap w-full'>
                     <Radio name='timer' id='15' label='15' value={15} onChange={(value: number) => setTime(Number(value))} />
                     <Radio name='timer' id='30' label='30' value={30} onChange={(value: number) => setTime(Number(value))} />
                     <Radio name='timer' id='45' label='45' value={45} onChange={(value: number) => setTime(Number(value))} />
@@ -179,8 +198,17 @@ const Room = () => {
                 </FormItem>
               )
             }
+            <FormItem label="Audience" labelPosition='left' labelWidth="w-[7rem]">
+              <div className="flex flex-wrap w-full">
+                {audience.map((player: User, index: any) => {
+                  return (
+                    <Checkbox key={player.id} name="audience" id={index} label={player.name} value={player.id} onChange={(value: string) => handleSetPlayers(value)}/>
+                  )
+                })}
+              </div>
+            </FormItem>
             <FormItem label="First Pick" labelPosition='left' labelWidth="w-[7rem]">
-              <div className="flex">
+              <div className="flex flex-wrap w-full">
                 {players.map((player: User, index: any) => {
                   return (
                     <Radio key={player.id} name="first-pick" id={player.id} label={player.name} value={index} onChange={(value: string) => setFirstPick(value)}/>
