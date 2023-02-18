@@ -217,9 +217,9 @@ const Room = () => {
               </div>
             </FormItem>
             <div className="flex justify-end">
-              <Button type='text' onClick={() => openInfo()}>Help</Button>
-              <Button type='primary' onClick={() => copyLink()}>Share Room Link</Button>
-              <Button type='success' disabled={players.length !== 2 || !(firstPick && (gameType !== 'std' || mode) && (withTimer !== 'Yes' || time))} onClick={() => startGame()}>Start Game</Button>
+              <Button type='text' size="sm" onClick={() => openInfo()}>Help</Button>
+              <Button type='primary' size="sm" onClick={() => copyLink()}>Share Room Link</Button>
+              <Button type='success' size="sm" disabled={players.length !== 2 || !(firstPick && (gameType !== 'std' || mode) && (withTimer !== 'Yes' || time))} onClick={() => startGame()}>Start Game</Button>
             </div>
           </Card>
         </div>
@@ -233,18 +233,31 @@ const Room = () => {
         <div className='mt-2'>
           <h3 className='text-md font-semibold mb-1'>Game Type</h3>
           <p className='text-sm text-gray-700 mb-4'>
-            Standard is a team versus team setup with a maximum of 4 characters per team. Abyss Floor 12 is an 8 versus 8 team setup <span className="font-semibold">(currently not available)</span>
+            Standard is a team versus team setup with a maximum of 4 characters per team. Abyss Floor 12 is an 8 versus 8 team setup
           </p>
           <h3 className='text-md font-semibold mb-1'>Mode</h3>
           <p className='text-sm text-gray-700 mb-4'>
             <span className="font-semibold">(Standard only)</span> Choose 1 of specific team sizes
           </p>
+          <h3 className='text-md font-semibold mb-1'>Auto Bans</h3>
+          <p className='text-sm text-gray-700 mb-4'>
+            Select from a number of categories pertaining to a certain group of characters <span className="font-semibold">(Anemo characters, adult characters, etc)</span>. If this is set, the characters that are related to one of the set auto bans will not be visible from the character table, giving the players a tighter selection of characters
+          </p>
+          <h3 className='text-md font-semibold mb-1'>With Timer</h3>
+          <p className='text-sm text-gray-700 mb-4'>
+            Choose whether or not to include a timer
+          </p>
+          <h3 className='text-md font-semibold mb-1'>Timer (Seconds)</h3>
+          <p className='text-sm text-gray-700 mb-4'>
+            Choose 1 between choices of time (15 seconds, 30 seconds, 45 seconds, 60 seconds). Will only be visible if <span className="font-semibold">With Timer</span> is set to <span className="font-semibold">Yes</span>
+          </p>
+          <h3 className='text-md font-semibold mb-1'>Audience</h3>
+          <p className='text-sm text-gray-700 mb-4'>
+            A list of people who have entered your room. Here, you can choose the players to participate in the drafting (exactly 2 players only)
+          </p>
           <h3 className='text-md font-semibold mb-1'>First Pick</h3>
           <p className='text-sm text-gray-700 mb-4'>
-            Choose which player to go first <span className="font-semibold">(options will be visible once players enter the room)</span>
-          </p>
-          <p className='text-sm text-gray-700 mb-4'>
-            In order for the game master to start the game, the room must consist of at least 2 players.
+            Choose which player to go first <span className="font-semibold">(options will be visible once you select them from the Audience field)</span>
           </p>
         </div>
         <div className='mt-8 flex justify-end'>

@@ -371,7 +371,7 @@ const Game = () => {
             { 
               [...selection.current[0]?.selection.picks.characters].map((character: Character, index: number) => {
                 return character.name !== 'No Pick' ? (
-                  <div key={index} className={`bg-gray-800 bg-opacity-70 ${gameType === 'std' ? 'h-64 w-44' : 'h-44 w-24'} mx-2 border-4 overflow-hidden rounded-xl ${getCharacterBorder(character)}`}>
+                  <div key={index} className={`bg-gray-800 bg-opacity-70 h-64 w-44 mx-2 border-4 overflow-hidden rounded-xl ${getCharacterBorder(character)}`}>
                     <img src={`assets/Characters/VS/${character?.image}`} className="object-cover object-center h-full w-full" />
                   </div>
                 ) : null
@@ -397,7 +397,7 @@ const Game = () => {
               { 
                 [...selection.current[1]?.selection.picks.characters].map((character: Character, index: number) => {
                   return character.name !== 'No Pick' ? (
-                    <div key={index} className={`bg-gray-800 bg-opacity-70 ${gameType === 'std' ? 'h-64 w-44' : 'h-44 w-24'} mx-2 border-4 overflow-hidden rounded-xl ${getCharacterBorder(character)}`}>
+                    <div key={index} className={`bg-gray-800 bg-opacity-70 h-64 w-44 mx-2 border-4 overflow-hidden rounded-xl ${getCharacterBorder(character)}`}>
                       <img src={`assets/Characters/VS/${character?.image}`} className="object-cover object-center h-full w-full" />
                     </div>
                   ) : null
@@ -460,7 +460,7 @@ const Game = () => {
               The game will start when the game master clicks the start button (not visible for players).
             </p>
             <p className='text-sm text-gray-500 mb-2'>
-              One of the ban or pick panels will flash, indicating that side's player's turn to select a character.
+              A text will be displayed on the center of this page. This is the indicator for who is now selecting a character.
             </p>
             <p className='text-sm text-gray-500 mb-2'>
               For the players, to select a character, simply click a character in the character table in the center. A dialog will appear, asking if the player wishes to proceed selecting that character. Once the character is selected, that character will be removed from the table, and the player will not be able to select a character, as this is now the other player's turn.
@@ -469,16 +469,16 @@ const Game = () => {
               To find a specific character, simply type the name of that character in the text box above the character table.
             </p>
             <p className='text-sm text-gray-500 mb-2'>
-              The game ends when all players have selected the appropriate number of characters for the mode, or when the game master clicks the <span className="font-semibold">Go Back to Room</span> button (not visible for players).
+              The game ends when all players have selected the appropriate number of characters for the mode, or when the game master clicks the <span className="font-semibold">Go Back to Room</span> button (not visible for players or viewers).
             </p>
             <p className='text-sm text-gray-500 mb-8'>
-              When the game master clicks the  <span className="font-semibold">Go Back to Room</span> button, the game master, including the players, will be moved back to the room page where the game master can readjust the game settings.
+              When the game master clicks the  <span className="font-semibold">Go Back to Room</span> button, the game master, including the players and viewers, will be moved back to the room page where the game master can readjust the game settings.
             </p>
             <p className='text-sm text-gray-500 mb-2'>
               <span className="font-semibold">WARNING</span>
             </p>
             <p className='text-sm text-gray-500 mb-2'>
-              When you are in this page, do not attempt to refresh, as this might cause the game to break.
+              When you are in this page, do not attempt to refresh, as this might cause the game to break. Also, if you are a player, do not press <span className="italic">alt + tab</span> or change windows, as this will cause some characters to not appear in your character panel
             </p>
           </div>
           <div className='mt-8 flex justify-end'>
