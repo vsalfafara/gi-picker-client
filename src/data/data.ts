@@ -913,18 +913,18 @@ export const AutobanOptions: Autoban[] = [
   },
   {
     value: Regions.Mondstadt,
-    label: 'Mondstadt Characters'
+    label: 'Mondstadt-released Characters'
   },
   {
     value: Regions.Liyue,
-    label: 'Liyue Characters'
+    label: 'Liyue-released Characters'
   },
   {
     value: Regions.Inazuma,
-    label: 'Inazuma Characters'
+    label: 'Inazuma-released Characters'
   },
   {
     value: Regions.Sumeru,
-    label: 'Sumeru Characters'
+    label: 'Sumeru-released Characters'
   }
 ]
