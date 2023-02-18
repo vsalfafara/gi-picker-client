@@ -69,7 +69,7 @@ const Home = () => {
       <Card>
         <div className='flex justify-center items-center w-[25rem]'>
           <div className="w-full">
-            <h1 className='mb-4 text-center text-xl bold'>Genshin Impact Picking & Banning System</h1>
+            <h1 className='mb-4 text-center text-xl bold'>Genshin Impact Drafting System</h1>
             {/* {!roomId
             ?
               <FormItem>
