@@ -9,6 +9,13 @@ import { ssGetUser, ssGetSelection, ssGetAutoban } from "@/storage/session"
 import { User } from "@/types/storage"
 import { Transition } from "@headlessui/react"
 import NotificationContext from '../../context/NotifcationContext'
+import { format } from 'date-fns'
+import axios from "axios"
+
+const sheets = {
+  3: import.meta.env.VITE_SHEET_API_STANDARD_3V3,
+  abyss: import.meta.env.VITE_SHEET_API_ABYSS
+}
 
 type Turn = {
   player: User
@@ -43,6 +50,7 @@ const Game = () => {
   const {notificationHandler} = useContext(NotificationContext)
   const [params] = useSearchParams()
   const gameType = params.get('gameType')
+  const mode = params.get('mode')
   const withTimer = params.get('withTimer')
   const [turn, setTurn] = useState<Turn>()
   const [showTurn, setShowTurn] = useState(false)
@@ -73,6 +81,7 @@ const Game = () => {
   const selection = useRef<Selections[]>(ssGetSelection())
   const autoban = useRef<any>(ssGetAutoban())
   const selected = useRef(false)
+  const sheetData = useRef<any>({})
 
   useEffect(() => {
     if (autoban.current.length) {
@@ -219,6 +228,10 @@ const Game = () => {
       }, 600)
     })
 
+    socket.on('setSheetData', (data: any) => {
+      sheetData.current = data
+    })
+
     return () => {
       socket.off('draftStart')
       socket.off('getTime');
@@ -237,14 +250,16 @@ const Game = () => {
     const character = characterExists(selectedCharacter?.current.name)
     if (character || (selectedCharacter && selectedCharacter.current.name === 'No Pick')) {
       let newSelection = [...selection.current]
-      newSelection = newSelection.map((selections: Selections) => {
+      newSelection = newSelection.map((selections: Selections, index: number) => {
         if (selections.player.id === user.id) {
           if (selectType.current === 2) {
             selections.selection.picks.characters[selections.selection.picks.pointer] = selectedCharacter.current
             selections.selection.picks.pointer++
+            sheetData.current[`P${index+1} Pick #${selections.selection.picks.pointer}`] = `=Characters!${selectedCharacter.current.cell}`
           } else if (selectType.current === 1){
             selections.selection.bans.characters[selections.selection.bans.pointer] = selectedCharacter.current
             selections.selection.bans.pointer++
+            sheetData.current[`P${index+1} Ban #${selections.selection.bans.pointer}`] = `=Characters!${selectedCharacter.current.cell}`
           }
         }
         return selections
@@ -255,6 +270,7 @@ const Game = () => {
       if (startGame.current) {
         removeCharacterFromPanel()
         socket.emit('setNewSelection', {newSelection, roomId: user.roomId})
+        socket.emit('setSheetData', {sheetData: sheetData.current, roomId: user.roomId})
       }
     }
   }
@@ -334,6 +350,37 @@ const Game = () => {
     socket.emit('chat', newChat)
   }
 
+  async function saveData() {
+    sheetData.current['DATE & TIME'] = format(new Date(), 'MM/dd/yyyy h:mm b')
+    sheetData.current.P1 = selection.current[0].player.name
+    sheetData.current.P2 = selection.current[1].player.name
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    }
+    let url = ''
+    if (gameType === 'std' && mode === '3') {
+      url = sheets[3]
+    } else if (gameType === 'abyss') {
+      url = sheets.abyss
+    }
+    const response = await axios.post(
+      url,
+      JSON.stringify(sheetData.current),
+      config
+    )
+    if (response.status === 201) {
+      notificationHandler({
+        type: 'success',
+        message: 'Data saved!',
+        withIcon: true
+      })
+    }
+  }
+
   function getCharacterBorder(character: Character) {
     let border = 'border-gray-700'
     if (character?.vision === 'Anemo') border = 'border-green-300'
@@ -355,7 +402,13 @@ const Game = () => {
           {
             user.isHost && 
             (
-              <div className="absolute top-0 right-2">
+              <div className="absolute top-0 right-2 z-10">
+                {
+                  ((gameType === 'std' && mode === '3') || gameType === 'abyss') &&
+                  (
+                    <Button size="sm" type="success" onClick={saveData}>Save Data</Button>
+                  )
+                }
                 <Button size="sm" type="warning" onClick={goBack}>Go Back to Room</Button>
               </div>
             )

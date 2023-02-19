@@ -85,6 +85,7 @@ export type Character = {
   bodyType?: string
   weapon?: string
   region?: string
+  cell: string
 }
 
 type Panel = {
@@ -100,7 +101,8 @@ export const Characters: Character[] = [
     sex: Sexes.Male,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Sword,
-    region: Regions.Mondstadt
+    region: Regions.Mondstadt,
+    cell: 'A1'
   },
   {
     name: 'Aloy',
@@ -110,7 +112,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Bow,
-    region: Regions.None
+    region: Regions.None,
+    cell: 'A2'
   },
   {
     name: 'Alhaitham',
@@ -120,7 +123,8 @@ export const Characters: Character[] = [
     sex: Sexes.Male,
     bodyType: BodyTypes.Adult,
     weapon: Weapons.Sword,
-    region: Regions.Sumeru
+    region: Regions.Sumeru,
+    cell: 'A3'
   },
   {
     name: 'Amber',
@@ -130,7 +134,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Bow,
-    region: Regions.Mondstadt
+    region: Regions.Mondstadt,
+    cell: 'A4'
   },
   {
     name: 'Arataki Itto',
@@ -140,7 +145,8 @@ export const Characters: Character[] = [
     sex: Sexes.Male,
     bodyType: BodyTypes.Adult,
     weapon: Weapons.Claymore,
-    region: Regions.Inazuma
+    region: Regions.Inazuma,
+    cell: 'A5'
   },
   {
     name: 'Barbara',
@@ -150,7 +156,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Catalyst,
-    region: Regions.Mondstadt
+    region: Regions.Mondstadt,
+    cell: 'B1'
   },
   {
     name: 'Beidou',
@@ -160,7 +167,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Adult,
     weapon: Weapons.Claymore,
-    region: Regions.Liyue
+    region: Regions.Liyue,
+    cell: 'B2'
   },
   {
     name: 'Bennett',
@@ -170,7 +178,8 @@ export const Characters: Character[] = [
     sex: Sexes.Male,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Sword,
-    region: Regions.Mondstadt
+    region: Regions.Mondstadt,
+    cell: 'B3'
   },
   {
     name: 'Candace',
@@ -180,7 +189,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Adult,
     weapon: Weapons.Polearm,
-    region: Regions.Sumeru
+    region: Regions.Sumeru,
+    cell: 'C1'
   },
   {
     name: 'Chongyun',
@@ -190,7 +200,8 @@ export const Characters: Character[] = [
     sex: Sexes.Male,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Claymore,
-    region: Regions.Liyue
+    region: Regions.Liyue,
+    cell: 'C2'
   },
   {
     name: 'Collei',
@@ -200,7 +211,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Bow,
-    region: Regions.Sumeru
+    region: Regions.Sumeru,
+    cell: 'C3'
   },
   {
     name: 'Cyno',
@@ -210,7 +222,8 @@ export const Characters: Character[] = [
     sex: Sexes.Male,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Polearm,
-    region: Regions.Sumeru
+    region: Regions.Sumeru,
+    cell: 'C4'
   },
   {
     name: 'Diluc',
@@ -220,7 +233,8 @@ export const Characters: Character[] = [
     sex: Sexes.Male,
     bodyType: BodyTypes.Adult,
     weapon: Weapons.Claymore,
-    region: Regions.Mondstadt
+    region: Regions.Mondstadt,
+    cell: 'D1'
   },
   {
     name: 'Diona',
@@ -230,7 +244,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Child,
     weapon: Weapons.Bow,
-    region: Regions.Mondstadt
+    region: Regions.Mondstadt,
+    cell: 'D2'
   },
   {
     name: 'Dori',
@@ -240,7 +255,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Child,
     weapon: Weapons.Claymore,
-    region: Regions.Sumeru
+    region: Regions.Sumeru,
+    cell: 'D2'
   },
   {
     name: 'Eula',
@@ -250,7 +266,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Adult,
     weapon: Weapons.Claymore,
-    region: Regions.Mondstadt
+    region: Regions.Mondstadt,
+    cell: 'E1'
   },
   {
     name: 'Faruzan',
@@ -260,7 +277,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Bow,
-    region: Regions.Sumeru
+    region: Regions.Sumeru,
+    cell: 'F1'
   },
   {
     name: 'Fischl',
@@ -270,7 +288,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Bow,
-    region: Regions.Mondstadt
+    region: Regions.Mondstadt,
+    cell: 'F2'
   },
   {
     name: 'Ganyu',
@@ -280,7 +299,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Bow,
-    region: Regions.Liyue
+    region: Regions.Liyue,
+    cell: 'G1'
   },
   {
     name: 'Gorou',
@@ -290,7 +310,8 @@ export const Characters: Character[] = [
     sex: Sexes.Male,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Bow,
-    region: Regions.Inazuma
+    region: Regions.Inazuma,
+    cell: 'G2'
   },
   {
     name: 'Hu Tao',
@@ -300,7 +321,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Polearm,
-    region: Regions.Liyue
+    region: Regions.Liyue,
+    cell: 'H1'
   },
   {
     name: 'Jean',
@@ -310,7 +332,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Adult,
     weapon: Weapons.Sword,
-    region: Regions.Mondstadt
+    region: Regions.Mondstadt,
+    cell: 'J1'
   },
   {
     name: 'Kaedahara Kazuha',
@@ -320,7 +343,8 @@ export const Characters: Character[] = [
     sex: Sexes.Male,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Sword,
-    region: Regions.Liyue
+    region: Regions.Liyue,
+    cell: 'K1'
   },
   {
     name: 'Kaeya',
@@ -330,7 +354,8 @@ export const Characters: Character[] = [
     sex: Sexes.Male,
     bodyType: BodyTypes.Adult,
     weapon: Weapons.Sword,
-    region: Regions.Mondstadt
+    region: Regions.Mondstadt,
+    cell: 'K2'
   },
   {
     name: 'Kamisato Ayaka',
@@ -340,7 +365,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Sword,
-    region: Regions.Inazuma
+    region: Regions.Inazuma,
+    cell: 'K3'
   },
   {
     name: 'Kamisato Ayato',
@@ -350,7 +376,8 @@ export const Characters: Character[] = [
     sex: Sexes.Male,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Sword,
-    region: Regions.Inazuma
+    region: Regions.Inazuma,
+    cell: 'K4'
   },
   {
     name: 'Keqing',
@@ -360,7 +387,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Sword,
-    region: Regions.Liyue
+    region: Regions.Liyue,
+    cell: 'K5'
   },
   {
     name: 'Klee',
@@ -370,7 +398,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Child,
     weapon: Weapons.Catalyst,
-    region: Regions.Mondstadt
+    region: Regions.Mondstadt,
+    cell: 'K6'
   },
   {
     name: 'Kujou Sara',
@@ -380,7 +409,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Adult,
     weapon: Weapons.Bow,
-    region: Regions.Inazuma
+    region: Regions.Inazuma,
+    cell: 'K7'
   },
   {
     name: 'Kuki Shinobu',
@@ -390,7 +420,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Sword,
-    region: Regions.Inazuma
+    region: Regions.Inazuma,
+    cell: 'K8'
   },
   {
     name: 'Layla',
@@ -400,7 +431,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Sword,
-    region: Regions.Sumeru
+    region: Regions.Sumeru,
+    cell: 'L1'
   },
   {
     name: 'Lisa',
@@ -410,7 +442,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Adult,
     weapon: Weapons.Catalyst,
-    region: Regions.Mondstadt
+    region: Regions.Mondstadt,
+    cell: 'L2'
   },
   {
     name: 'Mona',
@@ -420,7 +453,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Catalyst,
-    region: Regions.Mondstadt
+    region: Regions.Mondstadt,
+    cell: 'M1'
   },
   {
     name: 'Nahida',
@@ -430,7 +464,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Child,
     weapon: Weapons.Catalyst,
-    region: Regions.Sumeru
+    region: Regions.Sumeru,
+    cell: 'N1'
   },
   {
     name: 'Nilou',
@@ -440,7 +475,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Sword,
-    region: Regions.Sumeru
+    region: Regions.Sumeru,
+    cell: 'N2'
   },
   {
     name: 'Ningguang',
@@ -450,7 +486,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Adult,
     weapon: Weapons.Catalyst,
-    region: Regions.Liyue
+    region: Regions.Liyue,
+    cell: 'N3'
   },
   {
     name: 'Noelle',
@@ -460,7 +497,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Claymore,
-    region: Regions.Mondstadt
+    region: Regions.Mondstadt,
+    cell: 'N4'
   },
   {
     name: 'Qiqi',
@@ -470,7 +508,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Child,
     weapon: Weapons.Sword,
-    region: Regions.Liyue
+    region: Regions.Liyue,
+    cell: 'Q1'
   },
   {
     name: 'Raiden Shogun',
@@ -480,7 +519,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Adult,
     weapon: Weapons.Polearm,
-    region: Regions.Inazuma
+    region: Regions.Inazuma,
+    cell: 'R1'
   },
   {
     name: 'Razor',
@@ -490,7 +530,8 @@ export const Characters: Character[] = [
     sex: Sexes.Male,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Claymore,
-    region: Regions.Mondstadt
+    region: Regions.Mondstadt,
+    cell: 'R2'
   },
   {
     name: 'Rosaria',
@@ -500,7 +541,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Adult,
     weapon: Weapons.Polearm,
-    region: Regions.Mondstadt
+    region: Regions.Mondstadt,
+    cell: 'R3'
   },
   {
     name: 'Sangonomiya Kokomi',
@@ -510,7 +552,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Catalyst,
-    region: Regions.Inazuma
+    region: Regions.Inazuma,
+    cell: 'S1'
   },
   {
     name: 'Sayu',
@@ -520,7 +563,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Child,
     weapon: Weapons.Claymore,
-    region: Regions.Inazuma
+    region: Regions.Inazuma,
+    cell: 'S2'
   },
   {
     name: 'Shenhe',
@@ -530,7 +574,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Adult,
     weapon: Weapons.Polearm,
-    region: Regions.Liyue
+    region: Regions.Liyue,
+    cell: 'S3'
   },
   {
     name: 'Shikanoin Heizou',
@@ -540,7 +585,8 @@ export const Characters: Character[] = [
     sex: Sexes.Male,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Catalyst,
-    region: Regions.Inazuma
+    region: Regions.Inazuma,
+    cell: 'S4'
   },
   {
     name: 'Sucrose',
@@ -550,7 +596,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Catalyst,
-    region: Regions.Mondstadt
+    region: Regions.Mondstadt,
+    cell: 'S5'
   },
   {
     name: 'Tartaglia/Childe',
@@ -560,7 +607,8 @@ export const Characters: Character[] = [
     sex: Sexes.Male,
     bodyType: BodyTypes.Adult,
     weapon: Weapons.Bow,
-    region: Regions.Liyue
+    region: Regions.Liyue,
+    cell: 'T1'
   },
   {
     name: 'Thoma',
@@ -570,7 +618,8 @@ export const Characters: Character[] = [
     sex: Sexes.Male,
     bodyType: BodyTypes.Adult,
     weapon: Weapons.Polearm,
-    region: Regions.Inazuma
+    region: Regions.Inazuma,
+    cell: 'T2'
   },
   {
     name: 'Tighnari',
@@ -580,7 +629,8 @@ export const Characters: Character[] = [
     sex: Sexes.Male,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Bow,
-    region: Regions.Sumeru
+    region: Regions.Sumeru,
+    cell: 'T3'
   },
   {
     name: 'Traveler/Aether/Lumine',
@@ -590,7 +640,8 @@ export const Characters: Character[] = [
     sex: Sexes.Any,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Sword,
-    region: Regions.None
+    region: Regions.None,
+    cell: 'T4'
   },
   {
     name: 'Venti',
@@ -600,7 +651,8 @@ export const Characters: Character[] = [
     sex: Sexes.Male,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Bow,
-    region: Regions.Mondstadt
+    region: Regions.Mondstadt,
+    cell: 'V1'
   },
   {
     name: 'Wanderer',
@@ -610,7 +662,8 @@ export const Characters: Character[] = [
     sex: Sexes.Male,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Catalyst,
-    region: Regions.Sumeru
+    region: Regions.Sumeru,
+    cell: 'W1'
   },
   {
     name: 'Xiangling',
@@ -620,7 +673,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Polearm,
-    region: Regions.Liyue
+    region: Regions.Liyue,
+    cell: 'X1'
   },
   {
     name: 'Xiao',
@@ -630,7 +684,8 @@ export const Characters: Character[] = [
     sex: Sexes.Male,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Polearm,
-    region: Regions.Liyue
+    region: Regions.Liyue,
+    cell: 'X2'
   },
   {
     name: 'Xingqiu',
@@ -640,7 +695,8 @@ export const Characters: Character[] = [
     sex: Sexes.Male,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Sword,
-    region: Regions.Liyue
+    region: Regions.Liyue,
+    cell: 'X3'
   },
   {
     name: 'Xinyan',
@@ -650,7 +706,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Claymore,
-    region: Regions.Liyue
+    region: Regions.Liyue,
+    cell: 'X4'
   },
   {
     name: 'Yae Miko',
@@ -660,7 +717,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Adult,
     weapon: Weapons.Catalyst,
-    region: Regions.Inazuma
+    region: Regions.Inazuma,
+    cell: 'Y1'
   },
   {
     name: 'Yanfei',
@@ -670,7 +728,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Catalyst,
-    region: Regions.Liyue
+    region: Regions.Liyue,
+    cell: 'Y2'
   },
   {
     name: 'Yaoyao',
@@ -680,7 +739,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Child,
     weapon: Weapons.Polearm,
-    region: Regions.Liyue
+    region: Regions.Liyue,
+    cell: 'Y3'
   },
   {
     name: 'Yelan',
@@ -690,7 +750,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Adult,
     weapon: Weapons.Bow,
-    region: Regions.Liyue
+    region: Regions.Liyue,
+    cell: 'Y4'
   },
   {
     name: 'Yoimiya',
@@ -700,7 +761,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Bow,
-    region: Regions.Inazuma
+    region: Regions.Inazuma,
+    cell: 'Y5'
   },
   {
     name: 'Yun Jin',
@@ -710,7 +772,8 @@ export const Characters: Character[] = [
     sex: Sexes.Female,
     bodyType: BodyTypes.Teenager,
     weapon: Weapons.Polearm,
-    region: Regions.Liyue
+    region: Regions.Liyue,
+    cell: 'Y6'
   },
   {
     name: 'Zhongli',
@@ -720,7 +783,8 @@ export const Characters: Character[] = [
     sex: Sexes.Male,
     bodyType: BodyTypes.Adult,
     weapon: Weapons.Polearm,
-    region: Regions.Liyue
+    region: Regions.Liyue,
+    cell: 'Z1'
   }
 ]
 
@@ -728,6 +792,7 @@ export const NoPick: Character = {
   name: 'No Pick',
   vision: Elements.Unaligned.name,
   image: 'zz.webp',
+  cell: 'AA1'
 }
 
 let modifiedCharacters = [...Characters]

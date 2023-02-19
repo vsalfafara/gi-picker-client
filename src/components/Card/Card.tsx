@@ -6,7 +6,7 @@ type CardProps = {
 }
 
 const Card = ({ title, children, fullHeight, className }: CardProps) => {
-  const cardClass = `border rounded-md border-gray-300 shadow-md bg-white ${fullHeight ? 'h-screen' : ''} ${className}`.trim()
+  const cardClass = `border rounded-md shadow-md bg-white ${fullHeight ? 'h-screen' : ''} ${className}`.trim()
 
   const cardTitle = () => {
     if (title) {
