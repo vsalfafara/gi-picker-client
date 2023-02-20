@@ -411,7 +411,7 @@ const Game = () => {
                 {
                   ((gameType === 'std' && (mode === 'kingOfTeyvat' || mode === 'fight2DaTop')) || gameType === 'abyss') &&
                   (
-                    <Button size="sm" type="success" onClick={() => saveData()}>Save Data</Button>
+                    <Button size="sm" type="success" onClick={() => saveData()} disabled={dataSaved.current}>Save Data</Button>
                   )
                 }
                 <Button size="sm" type="warning" onClick={() => goBack()}>Go Back to Room</Button>
