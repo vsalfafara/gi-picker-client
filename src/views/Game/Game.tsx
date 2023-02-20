@@ -9,7 +9,6 @@ import { ssGetUser, ssGetSelection, ssGetAutoban } from "@/storage/session"
 import { User } from "@/types/storage"
 import { Transition } from "@headlessui/react"
 import NotificationContext from '../../context/NotifcationContext'
-import { format } from 'date-fns'
 import axios from "axios"
 
 const sheets = {
@@ -81,7 +80,9 @@ const Game = () => {
   const selection = useRef<Selections[]>(ssGetSelection())
   const autoban = useRef<any>(ssGetAutoban())
   const selected = useRef(false)
-  const sheetData = useRef<any>({})
+  const sheetData = useRef<any>([])
+  const dataSaved = useRef(false)
+
 
   useEffect(() => {
     if (autoban.current.length) {
@@ -209,6 +210,8 @@ const Game = () => {
     })
 
     socket.on('gameCompleted', () => {
+      sheetData.current.unshift(selection.current[1].player.name)
+      sheetData.current.unshift(selection.current[0].player.name)
       setHideDraft(true)
       const handleShowVSScreenDelay = setTimeout(() => {
         setShowVSScreen(true)
@@ -250,20 +253,19 @@ const Game = () => {
     const character = characterExists(selectedCharacter?.current.name)
     if (character || (selectedCharacter && selectedCharacter.current.name === 'No Pick')) {
       let newSelection = [...selection.current]
-      newSelection = newSelection.map((selections: Selections, index: number) => {
+      newSelection = newSelection.map((selections: Selections) => {
         if (selections.player.id === user.id) {
           if (selectType.current === 2) {
             selections.selection.picks.characters[selections.selection.picks.pointer] = selectedCharacter.current
             selections.selection.picks.pointer++
-            sheetData.current[`P${index+1} Pick #${selections.selection.picks.pointer}`] = `=Characters!${selectedCharacter.current.cell}`
           } else if (selectType.current === 1){
             selections.selection.bans.characters[selections.selection.bans.pointer] = selectedCharacter.current
             selections.selection.bans.pointer++
-            sheetData.current[`P${index+1} Ban #${selections.selection.bans.pointer}`] = `=Characters!${selectedCharacter.current.cell}`
           }
         }
         return selections
       })
+      sheetData.current.push(`=Characters!${selectedCharacter.current.cell}`)
       setShowDialog(false)
       showPanel.current = false
       setSelectionType(-1)
@@ -351,33 +353,36 @@ const Game = () => {
   }
 
   async function saveData() {
-    sheetData.current['DATE & TIME'] = format(new Date(), 'MM/dd/yyyy h:mm b')
-    sheetData.current.P1 = selection.current[0].player.name
-    sheetData.current.P2 = selection.current[1].player.name
-
+    dataSaved.current = true
+    const endpoint = `${import.meta.env.VITE_SOCKET}saveData`
     const config = {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       }
     }
-    let url = ''
-    if (gameType === 'std' && mode === '3') {
-      url = sheets[3]
-    } else if (gameType === 'abyss') {
-      url = sheets.abyss
+    const body = {
+      mode: mode ? mode : gameType,
+      sheetData: Array.from(new Set(sheetData.current))
     }
     const response = await axios.post(
-      url,
-      JSON.stringify(sheetData.current),
+      endpoint,
+      JSON.stringify(body),
       config
     )
-    if (response.status === 201) {
+    if (response.status === 200) {
       notificationHandler({
         type: 'success',
         message: 'Data saved!',
         withIcon: true
       })
+    } else {
+      notificationHandler({
+        type: 'danger',
+        message: 'Something went wrong...',
+        withIcon: true
+      })
+      dataSaved.current = false
     }
   }
 
@@ -404,12 +409,12 @@ const Game = () => {
             (
               <div className="absolute top-0 right-2 z-10">
                 {
-                  ((gameType === 'std' && mode === '3') || gameType === 'abyss') &&
+                  ((gameType === 'std' && (mode === 'kingOfTeyvat' || mode === 'fight2DaTop')) || gameType === 'abyss') &&
                   (
-                    <Button size="sm" type="success" onClick={saveData}>Save Data</Button>
+                    <Button size="sm" type="success" onClick={() => saveData()}>Save Data</Button>
                   )
                 }
-                <Button size="sm" type="warning" onClick={goBack}>Go Back to Room</Button>
+                <Button size="sm" type="warning" onClick={() => goBack()}>Go Back to Room</Button>
               </div>
             )
           }
@@ -561,40 +566,74 @@ const Game = () => {
             )
           }
         </Dialog>
-        <div className="flex justify-end p-4">
-          {user.isHost &&
-          (
-            <>
-              <Button size="sm" onClick={start} disabled={startGame.current}>Start</Button>
-              <Button size="sm" type="warning" onClick={goBack}>Go Back to Room</Button>
-            </>
-          )}
-          <Button size="sm" type="success" onClick={openChat}>
-            { newMessage && <span className="absolute -top-2 -right-2 h-4 w-4 bg-red-500 rounded-full" />}
-            Chat
-          </Button>
-          <Button size="sm" type="danger" onClick={openHelp}>Help</Button>
+        <div className="flex justify-center h-16 my-2 relative">
+          {
+            withTimer === 'Yes' &&
+            (
+              <div className="flex w-36 justify-center items-center text-white bg-gray-800 bg-opacity-70 border-4 border-yellow-600 ">
+                <span className="text-6xl font-bold pb-[.5rem]">{time}</span>
+              </div>
+            )
+          }
+          <div className="absolute right-0 h-full flex items-center">
+            {user.isHost &&
+            (
+              <>
+                <Button size="sm" onClick={start} disabled={startGame.current}>Start</Button>
+                <Button size="sm" type="warning" onClick={goBack}>Go Back to Room</Button>
+              </>
+            )}
+            <Button size="sm" type="success" onClick={openChat}>
+              { newMessage && <span className="absolute -top-2 -right-2 h-4 w-4 bg-red-500 rounded-full" />}
+              Chat
+            </Button>
+            <Button size="sm" type="danger" onClick={openHelp}>Help</Button>
+          </div>
         </div>
-        <div className="flex justify-between mb-4">
-          <div className="flex">
-            <div className="flex flex-col items-start">
-              <div className="sm:w-48 md:w-72 lg:w-96 text-2xl font-bold text-center text-white bg-yellow-600">
-                <p>{selection.current[0]?.player.name} {user.id === selection.current[0]?.player.id ? '(You)' : ''}</p>
-              </div>
-              <div className="flex flex-wrap sm:w-48 md:w-72 lg:w-96">
-                {[...selection.current[0]?.selection.picks.characters].map((character: Character, index: number) => {
-                  return (
-                    <div key={index} className={`${gameType === 'std' ? 'h-40 w-full' : 'h-32 w-1/2'} border-4 border-yellow-600 rounded-md bg-gray-800 bg-opacity-70 last:mr-0 overflow-hidden`}>
-                      {
-                        character && <img src={`assets/Characters/Admin Panel/${character?.image}`} alt="" className="object-cover object-center h-full w-full" />
-                      }
-                    </div>
-                  )
-                })}
-              </div>
+        <div className="flex justify-between mb-4 min-h-[500px]">
+          <div className="flex flex-col justify-center">
+            <div className="sm:w-48 md:w-72 lg:w-96 text-2xl font-bold text-center text-white bg-yellow-600">
+              <p>{selection.current[0]?.player.name} {user.id === selection.current[0]?.player.id ? '(You)' : ''}</p>
+            </div>
+            <div className="flex flex-wrap sm:w-48 md:w-72 lg:w-96">
+              {[...selection.current[0]?.selection.picks.characters].map((character: Character, index: number) => {
+                return (
+                  <div key={index} className={`${gameType === 'std' ? 'h-40 w-full' : 'h-32 w-1/2'} border-4 border-yellow-600 rounded-md bg-gray-800 bg-opacity-70 last:mr-0 overflow-hidden`}>
+                    {
+                      character && <img src={`assets/Characters/Admin Panel/${character?.image}`} alt="" className="object-cover object-center h-full w-full" />
+                    }
+                  </div>
+                )
+              })}
+            </div>
+            <div className="flex flex-wrap">
+              {[...selection.current[0]?.selection.bans.characters].map((character: Character, index) => {
+                return (
+                  <div key={index} className="relative sm:h-16 md:h-16 lg:h-20 sm:w-24 md:w-28 lg:w-32 border-4 border-red-400 rounded-md bg-gray-800 bg-opacity-70 overflow-hidden">
+                    {
+                      character?.image && (
+                      <Transition
+                        appear={true}
+                        show={!!character}
+                        enter="transition-opacity duration-300"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="transition-opacity duration-300"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                        className="sm:h-14 md:h-16 lg:h-20 sm:w-24 md:w-28 lg:w-32"
+                      >
+                        <img src={`assets/Characters/Panel/${character?.image}`} alt="" className="object-cover object-center h-full w-full" />
+                      </Transition>
+                      )
+                    }
+                    {character && <div className="absolute top-0 left-0 h-full w-full z-10 bg-red-900 bg-opacity-40" />}
+                  </div>
+                )
+              })}
             </div>
           </div>
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center w-full justify-center">
             <Transition
               show={showSplash}
               enter="transition ease-out duration-500"
@@ -662,7 +701,7 @@ const Game = () => {
             }
           </div>
           <div className="flex">
-            <div className="flex flex-col items-end">
+            <div className="flex flex-col justify-center items-end">
               <div className="sm:w-48 md:w-72 lg:w-96 text-2xl font-bold text-center text-white bg-yellow-600">
                 <p>{selection.current[1]?.player.name} {user.id === selection.current[1]?.player.id ? '(You)' : ''}</p>
               </div>
@@ -677,69 +716,33 @@ const Game = () => {
                   )
                 })}
               </div>
+              <div className="flex flex-row-reverse flex-wrap justify-start">
+                {[...selection.current[1]?.selection.bans.characters].map((character: Character, index) => {
+                  return (
+                    <div key={index} className="relative sm:h-16 md:h-16 lg:h-20 sm:w-24 md:w-28 lg:w-32 border-4 border-red-400 rounded-md bg-gray-800 bg-opacity-70 overflow-hidden">
+                      {
+                        character?.image && (
+                        <Transition
+                          appear={true}
+                          show={!!character}
+                          enter="transition-opacity duration-300"
+                          enterFrom="opacity-0"
+                          enterTo="opacity-100"
+                          leave="transition-opacity duration-300"
+                          leaveFrom="opacity-100"
+                          leaveTo="opacity-0"
+                          className="sm:h-16 md:h-16 lg:h-20 sm:w-24 md:w-28 lg:w-32"
+                        >
+                          <img src={`assets/Characters/Panel/${character?.image}`} alt="" className="object-cover object-center h-full w-full" />
+                        </Transition>
+                        )
+                      }
+                      {character && <div className="absolute top-0 left-0 h-full w-full z-10 bg-red-900 bg-opacity-40" />}
+                    </div>
+                  )
+                })}
+              </div> 
             </div>
-          </div>
-        </div>
-        <div className="flex justify-between">
-          <div className="flex justify-center">
-            {[...selection.current[0]?.selection.bans.characters].map((character: Character, index) => {
-              return (
-                <div key={index} className="relative sm:h-16 md:h-16 lg:h-20 sm:w-24 md:w-28 lg:w-32 border-4 border-red-400 rounded-md bg-gray-800 bg-opacity-70 overflow-hidden">
-                  {
-                    character?.image && (
-                    <Transition
-                      appear={true}
-                      show={!!character}
-                      enter="transition-opacity duration-300"
-                      enterFrom="opacity-0"
-                      enterTo="opacity-100"
-                      leave="transition-opacity duration-300"
-                      leaveFrom="opacity-100"
-                      leaveTo="opacity-0"
-                      className="sm:h-14 md:h-16 lg:h-20 sm:w-24 md:w-28 lg:w-32"
-                    >
-                      <img src={`assets/Characters/Panel/${character?.image}`} alt="" className="object-cover object-center h-full w-full" />
-                    </Transition>
-                    )
-                  }
-                  {character && <div className="absolute top-0 left-0 h-full w-full z-10 bg-red-900 bg-opacity-40" />}
-                </div>
-              )
-            })}
-          </div>
-          {
-            withTimer === 'Yes' &&
-            (
-              <div className="flex w-36 justify-center text-white bg-gray-800 bg-opacity-70 border-4 border-yellow-600 ">
-                <span className="text-6xl font-bold">{time}</span>
-              </div>
-            )
-          }
-          <div className="flex flex-row-reverse justify-center">
-            {[...selection.current[1]?.selection.bans.characters].map((character: Character, index) => {
-              return (
-                <div key={index} className="relative sm:h-16 md:h-16 lg:h-20 sm:w-24 md:w-28 lg:w-32 border-4 border-red-400 rounded-md bg-gray-800 bg-opacity-70 overflow-hidden">
-                  {
-                    character?.image && (
-                    <Transition
-                      appear={true}
-                      show={!!character}
-                      enter="transition-opacity duration-300"
-                      enterFrom="opacity-0"
-                      enterTo="opacity-100"
-                      leave="transition-opacity duration-300"
-                      leaveFrom="opacity-100"
-                      leaveTo="opacity-0"
-                      className="sm:h-16 md:h-16 lg:h-20 sm:w-24 md:w-28 lg:w-32"
-                    >
-                      <img src={`assets/Characters/Panel/${character?.image}`} alt="" className="object-cover object-center h-full w-full" />
-                    </Transition>
-                    )
-                  }
-                  {character && <div className="absolute top-0 left-0 h-full w-full z-10 bg-red-900 bg-opacity-40" />}
-                </div>
-              )
-            })}
           </div>
         </div>
       </Transition>

@@ -13,6 +13,7 @@ import { ssGetUser, ssSetAutoban, ssSetSelection } from '../../storage/session'
 import { User } from '../../types/storage'
 import Select from 'react-select'
 import Checkbox from '@/components/Input/Checkbox'
+import axios from 'axios'
 
 const Room = () => {
   const navigate = useNavigate();
@@ -44,17 +45,7 @@ const Room = () => {
   useEffect(() => {
     socket.on('getAllPlayersInRoom', (users: User[]) => setAudience(users))
     resetCharacters()
-    socket.on('startGame', ({ autoban, gameType, mode, withTimer, game }) => {
-      let noOfPicks: number = 0
-      let noOfBans: number = 0
-      if (gameType === 'std' && !!mode) {
-        noOfPicks = Number(mode)
-        noOfBans = Number(mode)
-      } else if (gameType === 'abyss'){
-        noOfPicks = 8
-        noOfBans = 3
-      }
-
+    socket.on('startGame', ({ autoban, gameType, mode, withTimer, game, noOfPicks, noOfBans }) => {
       const selectionArr = game.players.map((player: User) => {
         return {
           player: player,
@@ -147,6 +138,12 @@ const Room = () => {
 
     setPlayers(newPlayers)
   }
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    }
+  }
 
   return (
     <>
@@ -167,10 +164,12 @@ const Room = () => {
               (
                 <FormItem label="Mode" labelPosition='left' labelWidth="w-[7rem]">
                   <div className='flex flex-wrap w-full'>
-                    <Radio name='mode' id='1v1' label='1v1' value='1' onChange={(value: number) => setMode(value)} />
-                    <Radio name='mode' id='2v2' label='2v2' value='2' onChange={(value: number) => setMode(value)} />
-                    <Radio name='mode' id='3v3' label='3v3' value='3' onChange={(value: number) => setMode(value)} />
-                    <Radio name='mode' id='4v4' label='4v4' value='4' onChange={(value: number) => setMode(value)} />
+                    <Radio name='mode' id='1v1' label='1v1' value='1v1' onChange={(value: number) => setMode(value)} />
+                    <Radio name='mode' id='2v2' label='2v2' value='2v2' onChange={(value: number) => setMode(value)} />
+                    <Radio name='mode' id='3v3' label='3v3' value='3v3' onChange={(value: number) => setMode(value)} />
+                    <Radio name='mode' id='4v4' label='4v4' value='4v4' onChange={(value: number) => setMode(value)} />
+                    <Radio name='mode' id='kingOfTeyvat' label='King of Teyvat' value='kingOfTeyvat' onChange={(value: number) => setMode(value)} />
+                    <Radio name='mode' id='fight2DaTop' label='Fight 2 Da Top' value='fight2DaTop' onChange={(value: number) => setMode(value)} />
                   </div>
                 </FormItem>
               )
