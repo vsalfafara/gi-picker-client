@@ -168,6 +168,7 @@ const Room = () => {
                     <Radio name='mode' id='2v2' label='2v2' value='2v2' onChange={(value: number) => setMode(value)} />
                     <Radio name='mode' id='3v3' label='3v3' value='3v3' onChange={(value: number) => setMode(value)} />
                     <Radio name='mode' id='4v4' label='4v4' value='4v4' onChange={(value: number) => setMode(value)} />
+                    <Radio name='mode' id='amberGames' label='Amber Games' value='amberGames' onChange={(value: number) => setMode(value)} />
                     <Radio name='mode' id='kingOfTeyvat' label='King of Teyvat' value='kingOfTeyvat' onChange={(value: number) => setMode(value)} />
                     <Radio name='mode' id='fight2DaTop' label='Fight 2 Da Top' value='fight2DaTop' onChange={(value: number) => setMode(value)} />
                   </div>

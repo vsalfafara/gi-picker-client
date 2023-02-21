@@ -10,6 +10,7 @@ import { User } from "@/types/storage"
 import { Transition } from "@headlessui/react"
 import NotificationContext from '../../context/NotifcationContext'
 import axios from "axios"
+import { amberGamesCols, kingOfTeyvatCols, fight2DaTopCols, abyssCols } from "@/data/sheets"
 
 const sheets = {
   3: import.meta.env.VITE_SHEET_API_STANDARD_3V3,
@@ -82,7 +83,14 @@ const Game = () => {
   const selected = useRef(false)
   const sheetData = useRef<any>([])
   const dataSaved = useRef(false)
-
+  const newSheetRow = useRef<any>()
+  const colReference = useRef(0)
+  const axiosConfig = {
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    }
+  }
 
   useEffect(() => {
     if (autoban.current.length) {
@@ -210,8 +218,10 @@ const Game = () => {
     })
 
     socket.on('gameCompleted', () => {
-      sheetData.current.unshift(selection.current[1].player.name)
-      sheetData.current.unshift(selection.current[0].player.name)
+      if (user.isHost) {
+        sheetData.current.unshift(selection.current[1].player.name)
+        sheetData.current.unshift(selection.current[0].player.name)
+      }
       setHideDraft(true)
       const handleShowVSScreenDelay = setTimeout(() => {
         setShowVSScreen(true)
@@ -232,7 +242,8 @@ const Game = () => {
     })
 
     socket.on('setSheetData', (data: any) => {
-      sheetData.current = data
+      sheetData.current = data.sheetData
+      colReference.current = data.colReference
     })
 
     return () => {
@@ -256,23 +267,27 @@ const Game = () => {
       newSelection = newSelection.map((selections: Selections) => {
         if (selections.player.id === user.id) {
           if (selectType.current === 2) {
+            // sheetData.current.push(selectedCharacter.current.name)
+            // sheetData.current.push(`=FILTER(Charactersv2!A2:A,Charactersv2!B2:B=${kingOfTeyvatHistoryCols[colReference.current++]}${newSheetRow.current})`)
             selections.selection.picks.characters[selections.selection.picks.pointer] = selectedCharacter.current
             selections.selection.picks.pointer++
           } else if (selectType.current === 1){
+            // sheetData.current.push(selectedCharacter.current.name)
+            // sheetData.current.push(`=FILTER(Charactersv2!A2:A,Charactersv2!B2:B=${kingOfTeyvatHistoryCols[colReference.current++]}${newSheetRow.current})`)
             selections.selection.bans.characters[selections.selection.bans.pointer] = selectedCharacter.current
             selections.selection.bans.pointer++
           }
         }
         return selections
       })
-      sheetData.current.push(`=Characters!${selectedCharacter.current.cell}`)
+      sheetData.current.push(selectedCharacter.current.name)
       setShowDialog(false)
       showPanel.current = false
       setSelectionType(-1)
       if (startGame.current) {
         removeCharacterFromPanel()
         socket.emit('setNewSelection', {newSelection, roomId: user.roomId})
-        socket.emit('setSheetData', {sheetData: sheetData.current, roomId: user.roomId})
+        socket.emit('setSheetData', {sheetData: sheetData.current, roomId: user.roomId, colReference: colReference.current})
       }
     }
   }
@@ -351,24 +366,46 @@ const Game = () => {
     setMessage('')
     socket.emit('chat', newChat)
   }
+  
+  async function getRows() {
+    const nextRow = await axios.get(`${import.meta.env.VITE_SOCKET}getData/${mode ? mode : gameType}`, axiosConfig)
+    return nextRow.data
+  }
 
   async function saveData() {
     dataSaved.current = true
+    const newSheetRow = await getRows()
     const endpoint = `${import.meta.env.VITE_SOCKET}saveData`
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
+    const noDups = Array.from(new Set(sheetData.current))
+    let cols: any = []
+    if (gameType === 'std') {
+      if (mode === 'amberGames') {
+        cols = amberGamesCols
+      } else if (mode === 'kingOfTeyvat') {
+        cols = kingOfTeyvatCols
+      } else if (mode === 'fight2DaTop') {
+        cols = fight2DaTopCols
       }
+    } else if (gameType === 'abyss') {
+      cols = abyssCols
     }
+    const data = noDups.map((sheetData: any, index: number) => {
+      if (index > 1) {
+        const selection = []
+        selection.push(sheetData)
+        selection.push(`=FILTER(Characters!A2:A,Characters!B2:B=${cols[index - 2]}${newSheetRow})`)
+        return selection
+      }
+      return sheetData
+    })
     const body = {
       mode: mode ? mode : gameType,
-      sheetData: Array.from(new Set(sheetData.current))
+      sheetData: data.flatMap((data: any) => data)
     }
     const response = await axios.post(
       endpoint,
       JSON.stringify(body),
-      config
+      axiosConfig
     )
     if (response.status === 200) {
       notificationHandler({
@@ -409,9 +446,9 @@ const Game = () => {
             (
               <div className="absolute top-0 right-2 z-10">
                 {
-                  ((gameType === 'std' && (mode === 'kingOfTeyvat' || mode === 'fight2DaTop')) || gameType === 'abyss') &&
+                  ((gameType === 'std' && (mode === 'amberGames' || mode === 'kingOfTeyvat' || mode === 'fight2DaTop') || gameType === 'abyss')) &&
                   (
-                    <Button size="sm" type="success" onClick={() => saveData()} disabled={dataSaved.current}>Save Data</Button>
+                    <Button size="sm" type="success" onClick={() => saveData()}>Save Data</Button>
                   )
                 }
                 <Button size="sm" type="warning" onClick={() => goBack()}>Go Back to Room</Button>
