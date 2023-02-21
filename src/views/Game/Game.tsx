@@ -267,19 +267,18 @@ const Game = () => {
       newSelection = newSelection.map((selections: Selections) => {
         if (selections.player.id === user.id) {
           if (selectType.current === 2) {
-            // sheetData.current.push(selectedCharacter.current.name)
-            // sheetData.current.push(`=FILTER(Charactersv2!A2:A,Charactersv2!B2:B=${kingOfTeyvatHistoryCols[colReference.current++]}${newSheetRow.current})`)
             selections.selection.picks.characters[selections.selection.picks.pointer] = selectedCharacter.current
             selections.selection.picks.pointer++
           } else if (selectType.current === 1){
-            // sheetData.current.push(selectedCharacter.current.name)
-            // sheetData.current.push(`=FILTER(Charactersv2!A2:A,Charactersv2!B2:B=${kingOfTeyvatHistoryCols[colReference.current++]}${newSheetRow.current})`)
             selections.selection.bans.characters[selections.selection.bans.pointer] = selectedCharacter.current
             selections.selection.bans.pointer++
           }
         }
         return selections
       })
+      if (!sheetData.current.length) {
+        sheetData.current.push('EOL')
+      }
       sheetData.current.push(selectedCharacter.current.name)
       setShowDialog(false)
       showPanel.current = false
@@ -376,7 +375,9 @@ const Game = () => {
     dataSaved.current = true
     const newSheetRow = await getRows()
     const endpoint = `${import.meta.env.VITE_SOCKET}saveData`
-    const noDups = Array.from(new Set(sheetData.current))
+    const eolIndex = sheetData.current.findIndex((data: any) => data === 'EOL')
+    const playersInSheet = Array.from(new Set(sheetData.current.slice(0, eolIndex)))
+    const selectionInSheet = sheetData.current.slice(eolIndex + 1)
     let cols: any = []
     if (gameType === 'std') {
       if (mode === 'amberGames') {
@@ -389,15 +390,13 @@ const Game = () => {
     } else if (gameType === 'abyss') {
       cols = abyssCols
     }
-    const data = noDups.map((sheetData: any, index: number) => {
-      if (index > 1) {
-        const selection = []
-        selection.push(sheetData)
-        selection.push(`=FILTER(Characters!A2:A,Characters!B2:B=${cols[index - 2]}${newSheetRow})`)
-        return selection
-      }
-      return sheetData
+    const data = selectionInSheet.map((sheetData: any, index: number) => {
+      const selection = []
+      selection.push(sheetData)
+      selection.push(`=FILTER(Characters!A2:A,Characters!B2:B=${cols[index]}${newSheetRow})`)
+      return selection
     })
+    data.unshift(playersInSheet)
     const body = {
       mode: mode ? mode : gameType,
       sheetData: data.flatMap((data: any) => data)
