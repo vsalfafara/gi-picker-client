@@ -10,7 +10,7 @@ import { User } from "@/types/storage"
 import { Transition } from "@headlessui/react"
 import NotificationContext from '../../context/NotifcationContext'
 import axios from "axios"
-import { amberGamesCols, kingOfTeyvatCols, fight2DaTopCols, abyssCols } from "@/data/sheets"
+import { amberGamesCols, kingOfTeyvatCols, abyssCols } from "@/data/sheets"
 
 const sheets = {
   3: import.meta.env.VITE_SHEET_API_STANDARD_3V3,
@@ -384,8 +384,6 @@ const Game = () => {
         cols = amberGamesCols
       } else if (mode === 'kingOfTeyvat') {
         cols = kingOfTeyvatCols
-      } else if (mode === 'fight2DaTop') {
-        cols = fight2DaTopCols
       }
     } else if (gameType === 'abyss') {
       cols = abyssCols
@@ -445,7 +443,7 @@ const Game = () => {
             (
               <div className="absolute top-0 right-2 z-10">
                 {
-                  ((gameType === 'std' && (mode === 'amberGames' || mode === 'kingOfTeyvat' || mode === 'fight2DaTop') || gameType === 'abyss')) &&
+                  ((gameType === 'std' && (mode === 'amberGames' || mode === 'kingOfTeyvat') || gameType === 'abyss')) &&
                   (
                     <Button size="sm" type="success" onClick={() => saveData()}>Save Data</Button>
                   )
