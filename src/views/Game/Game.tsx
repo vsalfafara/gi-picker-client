@@ -391,7 +391,7 @@ const Game = () => {
     const data = selectionInSheet.map((sheetData: any, index: number) => {
       const selection = []
       selection.push(sheetData)
-      selection.push(`=FILTER(Characters!A2:A,Characters!B2:B=${cols[index]}${newSheetRow})`)
+      selection.push(`=IF(${cols[index]}${newSheetRow} <> "No Pick", IMAGE(FILTER(Characters!C2:C,Characters!A2:A=${cols[index]}${newSheetRow})), "X")`)
       return selection
     })
     data.unshift(playersInSheet)
