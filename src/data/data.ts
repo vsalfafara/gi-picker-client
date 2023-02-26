@@ -553,7 +553,7 @@ export const Characters: Character[] = [
     region: Regions.Mondstadt
   },
   {
-    name: 'Tartaglia/Childe',
+    name: 'Tartaglia',
     vision: Elements.Hydro.name,
     image: 'Tartaglia.webp',
     rarity: Rarities.VeryRare,
@@ -583,7 +583,7 @@ export const Characters: Character[] = [
     region: Regions.Sumeru
   },
   {
-    name: 'Traveler/Aether/Lumine',
+    name: 'Traveler',
     vision: Elements.Unaligned.name,
     image: 'Traveler.webp',
     rarity: Rarities.VeryRare,
