@@ -213,6 +213,16 @@ export const Characters: Character[] = [
     region: Regions.Sumeru
   },
   {
+    name: 'Dehya',
+    vision: Elements.Pyro.name,
+    image: 'Dehya.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Claymore,
+    region: Regions.Sumeru
+  },
+  {
     name: 'Diluc',
     vision: Elements.Pyro.name,
     image: 'Diluc.webp',
