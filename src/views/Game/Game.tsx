@@ -626,13 +626,13 @@ const Game = () => {
         </div>
         <div className="flex justify-between mb-4 min-h-[500px]">
           <div className="flex flex-col justify-center">
-            <div className="sm:w-48 md:w-72 lg:w-96 text-2xl font-bold text-center text-white bg-yellow-600">
+            <div className="sm:w-48 md:w-72 lg:w-96 text-2xl font-bold text-center text-white bg-green-500">
               <p>{selection.current[0]?.player.name} {user.id === selection.current[0]?.player.id ? '(You)' : ''}</p>
             </div>
             <div className="flex flex-wrap sm:w-48 md:w-72 lg:w-96">
               {[...selection.current[0]?.selection.picks.characters].map((character: Character, index: number) => {
                 return (
-                  <div key={index} className={`${gameType === 'std' ? 'h-40 w-full' : 'h-32 w-1/2'} border-4 border-yellow-600 rounded-md bg-gray-800 bg-opacity-70 last:mr-0 overflow-hidden`}>
+                  <div key={index} className={`${gameType === 'std' ? 'h-40 w-full' : 'h-32 w-1/2'} border-4 border-green-500 rounded-md bg-gray-800 bg-opacity-70 last:mr-0 overflow-hidden`}>
                     {
                       character && <img src={`assets/Characters/Admin Panel/${character?.image}`} alt="" className="object-cover object-center h-full w-full" />
                     }
@@ -736,13 +736,13 @@ const Game = () => {
           </div>
           <div className="flex">
             <div className="flex flex-col justify-center items-end">
-              <div className="sm:w-48 md:w-72 lg:w-96 text-2xl font-bold text-center text-white bg-yellow-600">
+              <div className="sm:w-48 md:w-72 lg:w-96 text-2xl font-bold text-center text-white bg-green-500">
                 <p>{selection.current[1]?.player.name} {user.id === selection.current[1]?.player.id ? '(You)' : ''}</p>
               </div>
               <div className="flex flex-wrap sm:w-48 md:w-72 lg:w-96">
                 {[...selection.current[1]?.selection.picks.characters].map((character: Character, index) => {
                   return (
-                    <div key={index} className={`${gameType === 'std' ? 'h-40 w-full' : 'h-32 w-1/2'} border-4 border-yellow-600 rounded-md bg-gray-800 bg-opacity-70 last:mr-0 overflow-hidden`}>
+                    <div key={index} className={`${gameType === 'std' ? 'h-40 w-full' : 'h-32 w-1/2'} border-4 border-green-500 rounded-md bg-gray-800 bg-opacity-70 last:mr-0 overflow-hidden`}>
                       {
                         character && <img src={`assets/Characters/Admin Panel/${character?.image}`} alt="" className="object-cover object-center h-full w-full" />
                       }
