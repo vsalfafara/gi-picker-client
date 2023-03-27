@@ -423,6 +423,16 @@ export const Characters: Character[] = [
     region: Regions.Mondstadt
   },
   {
+    name: 'Mika',
+    vision: Elements.Cryo.name,
+    image: 'Mika.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Polearm,
+    region: Regions.Mondstadt
+  },
+  {
     name: 'Mona',
     vision: Elements.Hydro.name,
     image: 'Mona.webp',

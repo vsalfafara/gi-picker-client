@@ -7,13 +7,11 @@ import NotificationContext from '../../context/NotifcationContext';
 import socket from '../../socket/socket'
 import { clearSessionStorage } from '../../storage/session';
 import { useParams } from 'react-router-dom'
-import { User } from '../../types/storage';
 import FormItem from '../../components/FormItem/FormItem';
 
 const Home = () => {
   const navigate = useNavigate();
   const {notificationHandler} = useContext(NotificationContext)
-  // const [key, setKey] = useState<string>('')
   const [name, setName] = useState<string>('')
   const { roomId } = useParams()
 
