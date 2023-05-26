@@ -143,6 +143,16 @@ export const Characters: Character[] = [
     region: Regions.Inazuma
   },
   {
+    name: 'Baizhu',
+    vision: Elements.Dendro.name,
+    image: 'Baizhu.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Catalyst,
+    region: Regions.Liyue
+  },
+  {
     name: 'Barbara',
     vision: Elements.Hydro.name,
     image: 'Barbara.webp',
@@ -358,9 +368,19 @@ export const Characters: Character[] = [
     image: 'Kamisato Ayato.webp',
     rarity: Rarities.VeryRare,
     sex: Sexes.Male,
-    bodyType: BodyTypes.Teenager,
+    bodyType: BodyTypes.Adult,
     weapon: Weapons.Sword,
     region: Regions.Inazuma
+  },
+  {
+    name: 'Kaveh',
+    vision: Elements.Dendro.name,
+    image: 'Kaveh.webp',
+    rarity: Rarities.VeryRare,
+    sex: Sexes.Male,
+    bodyType: BodyTypes.Adult,
+    weapon: Weapons.Claymore,
+    region: Regions.Sumeru
   },
   {
     name: 'Keqing',

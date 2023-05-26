@@ -442,12 +442,12 @@ const Game = () => {
             user.isHost && 
             (
               <div className="absolute top-0 right-2 z-10">
-                {
+                {/* {
                   ((gameType === 'std' && (mode === 'amberGames' || mode === 'kingOfTeyvat') || gameType === 'abyss')) &&
                   (
                     <Button size="sm" type="success" onClick={() => saveData()}>Save Data</Button>
                   )
-                }
+                } */}
                 <Button size="sm" type="warning" onClick={() => goBack()}>Go Back to Room</Button>
               </div>
             )
