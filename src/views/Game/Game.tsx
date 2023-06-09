@@ -707,7 +707,7 @@ const Game = () => {
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                   >
-                    <div className="h-[450px] overflow-y-scroll scrollbar scrollbar-thin scrollbar-thumb-gray-400 scrollbar-thumb-rounded-full p-4 bg-gray-800 border-4 border-yellow-600 rounded-md">
+                    <div className="h-[450px] overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-thumb-rounded-full p-4 bg-gray-800 border-4 border-yellow-600 rounded-md">
                       <div>
                         <Input value={filter} placeholder="Search Character" onChange={(value: string) => handleFilter(value)}></Input>
                       </div>
