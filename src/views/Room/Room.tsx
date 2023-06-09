@@ -228,7 +228,7 @@ const Room = () => {
         </Card>
         }
       </div>
-      <Dialog title='Game Settings' show={showDialog} width="w-[500px]" handleCloseOutside={closeInfo}>
+      <Dialog title='Game Settings' show={showDialog} width="w-[800px]" handleCloseOutside={closeInfo}>
         <div className='mt-2'>
           <h3 className='text-md font-semibold mb-1'>Game Type</h3>
           <p className='text-sm text-gray-700 mb-4'>
@@ -257,6 +257,13 @@ const Room = () => {
           <h3 className='text-md font-semibold mb-1'>First Pick</h3>
           <p className='text-sm text-gray-700 mb-4'>
             Choose which player to go first <span className="font-semibold">(options will be visible once you select them from the Audience field)</span>
+          </p>
+          <h3 className='text-md text-red-600 font-bold mb-1'>WARNING</h3>
+          <p className='text-sm text-gray-700 mb-4'>
+            Please advice everyone in the room to not refresh the room once you start the game. Refreshing the page in the game page will cause bugs for the user.
+          </p>
+          <p className='text-sm text-gray-700 mb-4'>
+            If one of the players are having difficulty due to issues on their end, you can click the <span className="font-semibold">Go Back to Room</span> button. The app will move all users including the host, players, and audience to the previous page. And from here, you can restart the game.
           </p>
         </div>
         <div className='mt-8 flex justify-end'>
