@@ -393,6 +393,16 @@ export const Characters: Character[] = [
     region: Regions.Liyue
   },
   {
+    name: 'Kirara',
+    vision: Elements.Dendro.name,
+    image: 'Kirara.webp',
+    rarity: Rarities.Rare,
+    sex: Sexes.Female,
+    bodyType: BodyTypes.Teenager,
+    weapon: Weapons.Sword,
+    region: Regions.Inazuma
+  },
+  {
     name: 'Klee',
     vision: Elements.Pyro.name,
     image: 'Klee.webp',
