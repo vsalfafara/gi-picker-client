@@ -437,7 +437,7 @@ const Game = () => {
       {
         showVSScreen &&
         (
-        <div className="flex flex-col items-center justify-start text-white h-[684px] relative">
+        <div className="flex flex-col items-center justify-start gap-2 text-white h-[684px] relative">
           {
             user.isHost && 
             (
@@ -540,7 +540,7 @@ const Game = () => {
                 })
               }
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center gap-2">
               <Input type="text" value={message} placeholder="Type a message here" onChange={(value: string) => setMessage(value)}></Input>
               <Button size="sm" type="primary" onClick={sendChat}>Send</Button>
             </div>
@@ -573,7 +573,7 @@ const Game = () => {
               When you are in this page, do not attempt to refresh, as this might cause the game to break. Also, if you are a player, do not press <span className="italic">alt + tab</span> or change windows, as this will cause some characters to not appear in your character panel
             </p>
           </div>
-          <div className='mt-8 flex justify-end'>
+          <div className='mt-8 flex justify-end gap-2'>
             <Button size="sm" type="danger" onClick={closeHelp}>Got it!</Button>
           </div>
         </Dialog>
@@ -586,7 +586,7 @@ const Game = () => {
           {
             withTimer === 'No' || (withTimer === 'Yes' && time > 0)
             ? (
-              <div className='mt-8 flex justify-end'>
+              <div className='mt-8 flex justify-end gap-2'>
                 <Button size="sm" type="danger" onClick={() => setShowDialog(false)}>Uhh wait...</Button>
                 {
                   selectionType
@@ -609,7 +609,7 @@ const Game = () => {
               </div>
             )
           }
-          <div className="absolute right-0 h-full flex items-center">
+          <div className="absolute right-0 h-full flex items-center gap-2">
             {user.isHost &&
             (
               <>

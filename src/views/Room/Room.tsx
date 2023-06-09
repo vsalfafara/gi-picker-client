@@ -215,7 +215,7 @@ const Room = () => {
                 })}
               </div>
             </FormItem>
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-2">
               <Button type='text' size="sm" onClick={() => openInfo()}>Help</Button>
               <Button type='primary' size="sm" onClick={() => copyLink()}>Share Room Link</Button>
               <Button type='success' size="sm" disabled={players.length !== 2 || !(firstPick && (gameType !== 'std' || mode) && (withTimer !== 'Yes' || time))} onClick={() => startGame()}>Start Game</Button>

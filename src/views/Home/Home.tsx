@@ -78,7 +78,7 @@ const Home = () => {
                 <Input name='Username' value={name} onChange={(value: string) => setName(value)} placeholder='Username'></Input>
               </FormItem>
             {/* } */}
-            <div>
+            <div className='flex flex-col gap-2'>
             {roomId
               ? <Button block disabled={!name} onClick={() => joinRoom()}>Join Room</Button>
               : <Button block disabled={!name} onClick={() => createRoom()}>Create Room</Button>}
