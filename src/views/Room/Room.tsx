@@ -248,7 +248,7 @@ const Room = () => {
           </p>
           <h3 className='text-md font-semibold mb-1'>Timer (Seconds)</h3>
           <p className='text-sm text-gray-700 mb-4'>
-            Choose 1 between choices of time (15 seconds, 30 seconds, 45 seconds, 60 seconds). Will only be visible if <span className="font-semibold">With Timer</span> is set to <span className="font-semibold">Yes</span>
+            <span className="font-semibold">(With Timer only)</span> Choose 1 between choices of time (15 seconds, 30 seconds, 45 seconds, 60 seconds).
           </p>
           <h3 className='text-md font-semibold mb-1'>Audience</h3>
           <p className='text-sm text-gray-700 mb-4'>
