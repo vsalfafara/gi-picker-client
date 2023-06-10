@@ -566,8 +566,8 @@ const Game = () => {
             <p className='text-sm text-gray-500 mb-8'>
               When the game master clicks the  <span className="font-semibold">Go Back to Room</span> button, the game master, including the players and viewers, will be moved back to the room page where the game master can readjust the game settings.
             </p>
-            <p className='text-sm text-gray-500 mb-2'>
-              <span className="font-semibold">WARNING</span>
+            <p className='text-md text-red-600 mb-2'>
+              <span className="font-bold">WARNING</span>
             </p>
             <p className='text-sm text-gray-500 mb-2'>
               When you are in this page, do not attempt to refresh, as this might cause the game to break. Also, if you are a player, do not press <span className="italic">alt + tab</span> or change windows, as this will cause some characters to not appear in your character panel

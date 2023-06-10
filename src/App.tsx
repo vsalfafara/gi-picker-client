@@ -14,7 +14,6 @@ function App() {
       <div className="fixed top-0 left-0 h-screen w-screen bg-bg bg-cover bg-center opacity-40 z-0"></div>
       <Particles
         id="tsparticles"
-        className="z-10"
         init={particlesInit}
         loaded={particlesLoaded}
         options={{
@@ -68,7 +67,7 @@ function App() {
           retina_detect: true
         }}
       />
-      <div className="z-20 w-full flex flex-col">
+      <div className="z-10 w-full flex flex-col">
         <div className="flex-grow">
           <Routes>
             {routes.map((route, index) => <Route key={index} path={route.path} element={route.element} />)}
