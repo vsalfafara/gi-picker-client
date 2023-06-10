@@ -714,13 +714,13 @@ const Game = () => {
                       <div className="flex justify-center">
                         {Object.keys(elements).map((element, index: number) => {
                           return (
-                            <div key={index} className="inline-flex flex-col max-w-20 w-full">
-                              <div className="max-w-20 h-auto w-auto m-2">
+                            <div key={index} className="inline-flex flex-col w-full">
+                              <div className="h-auto w-auto m-2">
                                 <img src={elements[element].image} className="h-auto w-full" />
                               </div>
                               {panels[element]?.map((panel: any, index: number) => {
                                 return (
-                                  <div key={index} className="max-w-20 h-auto m-2 cursor-pointer" onClick={() => selectCharacter(panel)}>
+                                  <div key={index} className="h-auto m-2 cursor-pointer" onClick={() => selectCharacter(panel)}>
                                     <img src={`assets/Characters/Thumbnail/${panel?.image}`} className="h-auto w-auto" />
                                   </div>
                                 )
